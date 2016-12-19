@@ -40,23 +40,9 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-(module commands
-    (COMMANDS-MODULE-INIT
-     EZD-COMMANDS
-     DEFINE-EZD-COMMAND
-     ARG-PARSE
-     NON-NEGATIVE?
-     NON-ZERO?
-     POSITIVE-NUMBER?
-     ANY?
-     DASH?
-     IN-READ-EVAL-DRAW
-     EZD-ERROR)
-
-  (import scheme
-          chicken
-          extras
-          srfi-1)
+(declare (unit commands))
+(include "scheme2c")
+(include "commands.sch")
 
 ;;; COMMAND PARSING.
 
@@ -172,7 +158,7 @@
 
 (define (POSITIVE-NUMBER? x) (and (number? x) (> x 0)))
 
-(define (ANY? x) #t)
+#;(define (ANY? x) #t) ;; Already defined in CHICKEN
 
 (define (DASH? x) (eq? x 'dash))
 
@@ -199,8 +185,8 @@
 
 (define (EZD-ERROR id form . args)
     (if (not in-read-eval-draw) (apply error id form args))
-    (apply format (current-error-port) form args)
-    (newline (current-error-port))
+    (apply format stderr-port form args)
+    (newline stderr-port)
     #f)
 
 ;;; Module initialization procedure.
@@ -208,5 +194,3 @@
 (define (COMMANDS-MODULE-INIT)
     (set! in-read-eval-draw #f)
     #t)
-
-)

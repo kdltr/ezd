@@ -55,12 +55,6 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-(module struct
-  (DEFINE-STRUCTURE
-   DEFINE-IN-LINE-STRUCTURE-ACCESS)
-
-(import scheme chicken)
-
 (define-syntax DEFINE-STRUCTURE
   (er-macro-transformer
     (lambda (exp rename compare?)
@@ -124,7 +118,7 @@
 			 (get-put slot index fname
 			     `(define (,fname self value)
 				      (vector-set! ,(check) ,index value)))))
-            `(begin (define (,(make-sym "MAKE-" name) ,@(initial-args))
+            `(begin (define (,(make-sym "make-" name) ,@(initial-args))
 				(let ((self (make-vector
 						,(+ 1 (length slots)))))
 				     (vector-set! self 0 ',name)
@@ -157,11 +151,33 @@
 ;;; access procedures should be constructed) or a #F (indicating that no
 ;;; access procedures are to be constructed) must be supplied.
 
+
+;; This macro is often use in .sch files to expose symbols for structure access.
+;; That’s why we redefine it so that it exports structure access symbols from modules.
+
 (define-syntax DEFINE-IN-LINE-STRUCTURE-ACCESS
   (er-macro-transformer
     (lambda (exp rename compare?)
-      `(define-structure ,@(cdr exp)))))
-    
+      (define struct-name (cadr exp))
+      (define (make-sym . x)
+        (string->symbol (apply string-append
+                               (map (lambda (x)
+                                      (if (symbol? x)
+                                          (symbol->string x)
+                                          x))
+                                 x))))
+      (define (make-isa)
+        (make-sym "ISA-" struct-name "?")) 
+      (define (make-load slot)
+        (make-sym struct-name "-" slot))
+      (define (make-store slot)
+        (make-sym struct-name "-" slot "!"))
+      
+      `(declare (export
+             ,(make-isa)
+             ,@(append-map
+               (lambda (slot) (list (make-load slot) (make-store slot)))
+               (filter identity (cddr exp))))))))
 
 #;(define-syntax DEFINE-IN-LINE-STRUCTURE-ACCESS
   (er-macro-transformer
@@ -228,4 +244,3 @@
     (define-macro DEFINE-IN-LINE-STRUCTURE-ACCESS
 	(lambda (exp expander)
 		(expander (list 'quote exp) expander))))
-)			      
