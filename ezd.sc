@@ -40,7 +40,7 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-(declare (unit ezd))
+;(declare (unit ezd))
 #;    (with xlib
 	  struct
 	  match
@@ -71,11 +71,11 @@
 	  editcolor
 	  transpbuttons)
 
-(declare (uses commands display window view drawing graphic events))
+;(declare (uses commands display window view drawing graphic events))
 
-(include "scheme2c")
+;(include "scheme2c")
 (include "struct")
-(include "ezd.sch")
+;(include "ezd.sch")
 
 ;;(define-c-external (C-SELECT int pointer pointer pointer pointer) int "select")
 (define (C-SELECT . _) (print "USING C-SELECT"))

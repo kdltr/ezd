@@ -41,13 +41,13 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-(declare (unit display))
+;(declare (unit display))
 
-(declare (uses commands window drawing view))
+;(declare (uses commands window drawing view))
 
-(include "scheme2c")
+;(include "scheme2c")
 (include "struct")
-(include "display.sch")
+;(include "display.sch")
 
 ;;; Display structure holds information specific to a display.  When a display
 ;;; object is created, it will install a system file task to handle events.

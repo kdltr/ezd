@@ -40,13 +40,13 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-(declare (unit events))
+;(declare (unit events))
 
-(declare (uses commands display window view drawing graphic))
+;(declare (uses commands display window view drawing graphic))
 
-(include "scheme2c")
+;(include "scheme2c")
 (include "struct")
-(include "events.sch")
+;(include "events.sch")
 
 ;;; Pointing device motion and keyboard input are reported to ezd by events.
 ;;; Events are represented by event records of the following form.  Lists of
