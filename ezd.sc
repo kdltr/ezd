@@ -71,7 +71,8 @@
 	  editcolor
 	  transpbuttons)
 
-(declare (uses commands display window view drawing graphic events))
+#;(declare (uses commands display window view drawing graphic events))
+(declare (uses commands ginfo display window drawing view graphic events))
 
 (include "scheme2c")
 (include "struct")

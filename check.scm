@@ -1,3 +1,3 @@
-(declare (uses window))
+(declare (uses ezd))
 
 (print *redraw-seq*)

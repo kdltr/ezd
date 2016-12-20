@@ -5,7 +5,12 @@
     (lambda (x)
       (orig (string-downcase x)))))
 
-(define-syntax define-external
+#;(define-syntax define-external
   (syntax-rules ()
     ((define-external symbol . rest)
      (declare (export symbol)))))
+
+(define-syntax define-external
+  (syntax-rules ()
+    ((define-external . rest)
+     (void))))

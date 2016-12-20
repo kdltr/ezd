@@ -44,7 +44,7 @@
 
 (declare (unit drawing))
 
-(declare (uses display window view graphic events commands))
+;(declare (uses display window view graphic events commands))
 
 (include "scheme2c")
 (include "struct")

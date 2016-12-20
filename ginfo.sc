@@ -41,8 +41,11 @@
 ;* SOFTWARE.
 
 (declare (unit ginfo))
+(use scheme2c-compatibility)
+(define putprop put!)
+(define getprop get)
 
-(declare (uses commands)) ;; +display
+;(declare (uses commands)) ;; +display
 
 (include "scheme2c")
 (include "struct")

@@ -43,7 +43,7 @@
 
 (declare (unit window))
 
-(declare (uses display view drawing graphic commands ginfo events ezd))
+;(declare (uses display view drawing graphic commands ginfo events ezd))
 
 (include "scheme2c")
 (include "struct")
