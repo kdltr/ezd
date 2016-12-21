@@ -100,7 +100,9 @@
 
 (define EZD-LOG #f)
 
-(define getenv get-environment-variable)
+(define (getenv var)
+  (or (get-environment-variable var)
+      ""))
 
 (eval-when (eval)
     (define ENV-EZDLOG "")

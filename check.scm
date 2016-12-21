@@ -1,4 +1,4 @@
-(use scheme2c-compatibility)
+(use scheme2c-compatibility xlib)
 
 (define putprop put!)
 (define getprop get)

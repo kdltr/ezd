@@ -185,8 +185,8 @@
 
 (define (EZD-ERROR id form . args)
     (if (not in-read-eval-draw) (apply error id form args))
-    (apply format stderr-port form args)
-    (newline stderr-port)
+    (apply format (current-error-port) form args)
+    (newline (current-error-port))
     #f)
 
 ;;; Module initialization procedure.

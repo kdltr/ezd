@@ -131,7 +131,7 @@
 							    (cdr slots)))
 						'()))
 				     self))
-			(define (,(make-sym "ISA-" name "?") x)
+			(define (,(make-sym "isa-" name "?") x)
 				(and (vector? x)
 				     (eq? (vector-ref x 0) ',name)))
 			,@(let loop ((i 1) (slots slots))

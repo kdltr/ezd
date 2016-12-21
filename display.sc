@@ -55,7 +55,7 @@
 (define-structure DISPLAY
     name
     (dpy (let ((dpy (xopendisplay name)))
-	      (if (null-pointer? dpy)
+	      (if (not dpy)
 		  (if (equal? name "")
 		      (error 'open-display
 			     "Environment variable DISPLAY is not defined")
@@ -80,7 +80,7 @@
 		   (default (xdefaultvisual dpy screen))
 		   (depth (xdefaultdepth dpy screen))
 		   (class (visual-class default)))
-		  (if (and (eq? depth 8) (eq? class pseudocolor))
+		  (if (and (eq? depth 8) (eq? class PSEUDOCOLOR))
 		      default
 		      (let* ((return (xmatchvisualinfo dpy screen 8
 					 pseudocolor))
@@ -175,7 +175,7 @@
 	  (save-current-drawing *current-drawing*))
 	 (if (not (display-handling-events self))
 	     (let loop ()
-		  (unless (zero? (xeventsqueued dpy queuedafterreading))
+		  (unless (zero? (xeventsqueued dpy QUEUEDAFTERREADING))
 			  (ynextevent dpy event)
 			  (display-handling-events! self #t)
 			  (if (eq? (xevent-type event) mappingnotify)
