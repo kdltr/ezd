@@ -12,5 +12,3 @@
 (include "view.sc")
 (include "graphic.sc")
 (include "events.sc")
-
-(print *redraw-seq*)

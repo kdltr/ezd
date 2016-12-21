@@ -158,6 +158,11 @@
 (define-syntax DEFINE-IN-LINE-STRUCTURE-ACCESS
   (er-macro-transformer
     (lambda (exp rename compare?)
+      `(void))))
+
+#;(define-syntax DEFINE-IN-LINE-STRUCTURE-ACCESS
+  (er-macro-transformer
+    (lambda (exp rename compare?)
       (define struct-name (cadr exp))
       (define (make-sym . x)
         (string->symbol (apply string-append
