@@ -56,11 +56,11 @@
     (and (symbol? x)
 	 (or (eq? x 'clear)
 	     (getprop x 'isa-color)
-	     (let* ((return (xparsecolor *dpy*
-				(display-colormap *display*)
-				(symbol->string x)))
-		    (status (car return))
-		    (c (cadr return)))
+	     (let* ((c (make-xcolor))
+                    (status (xparsecolor *dpy*
+                                         (display-colormap *display*)
+                                         (symbol->string x)
+                                         c)))
 		   (if (zero? status)
 		       #f
 		       (begin (putprop x 'isa-color

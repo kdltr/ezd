@@ -303,11 +303,7 @@
     "(pause [ millisecond pause time ])"
     (lambda (ms-pause)
 	    (if ms-pause
-		(let ((timeval (make-string 8)))
-		     (ezd '(draw-now))
-		     (c-int-set! timeval 0 (quotient ms-pause 1000))
-		     (c-int-set! timeval 4 (* (remainder ms-pause 1000) 1000))
-		     (c-select 0 0 0 0 timeval))
+		(thread-sleep! (/ ms-pause 1000))
 		(wait-system-file #f))))
 
 ;;; Module reset/initialization procedure.

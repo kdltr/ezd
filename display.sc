@@ -82,19 +82,18 @@
 		   (class (visual-class default)))
 		  (if (and (eq? depth 8) (eq? class PSEUDOCOLOR))
 		      default
-		      (let* ((return (xmatchvisualinfo dpy screen 8
-					 pseudocolor))
-			     (ok (car return))
-			     (vi (cadr return)))
-			    (if (not (zero? ok))
-				(begin (display-visual-depth! self 8)
-				       (display-colormap! self
-					   (xcreatecolormap dpy
-					       (xrootwindow dpy screen)
-					       (xvisualinfo-visual vi)
-					       allocnone))
-				       (xvisualinfo-visual vi))
-				default)))))
+		      (let* ((vi (make-xvisualinfo))
+		             (ok (xmatchvisualinfo dpy screen 8
+                                                   PSEUDOCOLOR vi)))
+                        (if (not (zero? ok))
+                            (begin (display-visual-depth! self 8)
+                              (display-colormap! self
+                                                 (xcreatecolormap dpy
+                                                                  (xrootwindow dpy screen)
+                                                                  (xvisualinfo-visual vi)
+                                                                  allocnone))
+                              (xvisualinfo-visual vi))
+                            default)))))
     (tiny-pixmap (xcreatepixmap (display-dpy self)
 		     (xrootwindow (display-dpy self) (display-screen self))
 		     1 1 (display-visual-depth self)))
@@ -245,12 +244,16 @@
     (let ((pc (getprop color 'private-color)))
 	 (if pc
 	     pc
-	     (let ((x (xallocnamedcolor (display-dpy display)
-			  (display-colormap display)
-			  (symbol->string color))))
-		  (if (not (zero? (car x)))
-		      (xcolor-pixel (caddr x))
-		      (begin (format stderr-port
+	     (let* ((hwcolor (make-xcolor))
+                    (excolor (make-xcolor))
+                    (ret (xallocnamedcolor (display-dpy display)
+                                           (display-colormap display)
+                                           (symbol->string color)
+                                           hwcolor
+                                           excolor)))
+		  (if (not (zero? ret))
+		      (xcolor-pixel excolor)
+		      (begin (format (current-error-port)
 				     "Can't allocate color: ~a~%" color)
 			     #f))))))
 

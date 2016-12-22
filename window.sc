@@ -109,11 +109,11 @@
     (xwindow (let* ((dpy (display-dpy display))
 		    (screen (display-screen display))
 		    (wa (let ((wa (make-xsetwindowattributes)))
-			     (xsetwindowattributes-background_pixel! wa
+			     (set-xsetwindowattributes-background_pixel! wa
 				 (window-background self))
-			     (xsetwindowattributes-border_pixel! wa
+			     (set-xsetwindowattributes-border_pixel! wa
 				 (window-foreground self))
-			     (xsetwindowattributes-colormap! wa
+			     (set-xsetwindowattributes-colormap! wa
 				 (display-colormap display))
 			     wa))
 		    (xwindow (xcreatewindow dpy
@@ -130,8 +130,8 @@
 				 wa))
 		    (gc (xcreategc dpy xwindow 0 (make-xgcvalues))))
 		   (let ((wmh (make-xwmhints)))
-			(xwmhints-flags! wmh 1)
-			(xwmhints-input! wmh 1)
+			(set-xwmhints-flags! wmh 1)
+			(set-xwmhints-input! wmh 1)
 			(xsetwmhints dpy xwindow wmh))
 		   (xstorename dpy xwindow title)
 		   (xseticonname dpy xwindow (symbol->string name))
@@ -229,22 +229,22 @@
 		       (or title (symbol->string name))
 		       foreground-name background-name))
 		(hints (make-xsizehints)))
-	       (xsizehints-flags! hints ussize)
-	       (xsizehints-width! hints width)
-	       (xsizehints-height! hints height)
+	       (set-xsizehints-flags! hints ussize)
+	       (set-xsizehints-width! hints width)
+	       (set-xsizehints-height! hints height)
 	       (when (pair? x-y)
-		     (xsizehints-flags! hints
+		     (set-xsizehints-flags! hints
 			 (bit-or (xsizehints-flags hints) usposition))
-		     (xsizehints-x! hints x)
-		     (xsizehints-y! hints y))
+		     (set-xsizehints-x! hints x)
+		     (set-xsizehints-y! hints y))
 	       (when fixed-size
-		     (xsizehints-flags! hints
+		     (set-xsizehints-flags! hints
 			 (bit-or (xsizehints-flags hints)
 				 pminsize pmaxsize))
-		     (xsizehints-min_width! hints width)
-		     (xsizehints-max_width! hints width)
-		     (xsizehints-min_height! hints height)
-		     (xsizehints-max_height! hints height))
+		     (set-xsizehints-min_width! hints width)
+		     (set-xsizehints-max_width! hints width)
+		     (set-xsizehints-min_height! hints height)
+		     (set-xsizehints-max_height! hints height))
 	       (xsetnormalhints *dpy* (window-xwindow w) hints)
 	       w)))
 
