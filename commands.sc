@@ -105,7 +105,7 @@
 ;;;	<any other obj>		no value is returned.
 
 (define (ARG-PARSE template args)
-    (if template
+    (if (not (null? template))
 	(let ((x (car template)))
 	     (cond ((and (pair? x) (eq? (car x) 'optional))
 		    (let ((match (arg-parse (append (cdr x) (cdr template))
