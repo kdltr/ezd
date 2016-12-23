@@ -45,5 +45,6 @@
 (include "view.sc")
 (include "graphic.sc")
 (include "events.sc")
+(include "rectangle.sc")
 
 (read-eval-draw (command-line-arguments))
