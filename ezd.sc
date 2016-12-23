@@ -77,9 +77,6 @@
 (include "struct")
 ;(include "ezd.sch")
 
-;;(define-c-external (C-SELECT int pointer pointer pointer pointer) int "select")
-(define (C-SELECT . _) (print "USING C-SELECT"))
-
 ;;; Version tag
 
 (define *EZD-VERSION* "15mar93jfb")
@@ -127,16 +124,16 @@
 		      #f))
     (set! nopixmap (or (member "-nopixmap" clargs) nopixmap))
     (if (member "-i" clargs)
-	(read-eval-print)
+	(repl)
 	(let ((old-reset reset))
 	     (if (and (not (member "-p" clargs)) (not (member "-s" clargs)))
-		 (print `(signal 2 1)))
+		 (set-signal-handler! 2 #f))
 	     (set! ezd-done #f)
 	     (set! in-read-eval-draw #t)
 	     (call-with-current-continuation
 		 (lambda (return)
 			 (set! reset (lambda () (return #t)))))
-	     (let loop ((command (or ezd-done (read))))
+	     (let loop ((command (or ezd-done (ezd-read))))
 		  (if ezd-log
 		      (if (or ezd-done (eof-object? command))
 			  (close-output-port ezd-log)
@@ -147,7 +144,7 @@
 				 (ezd '(pause)))
 			     (ezd-reset))
 		      (begin (ezd command)
-			     (loop (or ezd-done (read))))))
+			     (loop (or ezd-done (ezd-read))))))
 	     (set! reset old-reset)
 	     (set! ezd-done #f)
 	     (set! in-read-eval-draw #f))))
@@ -225,10 +222,10 @@
 	(with-input-from-file
 	    file
 	    (lambda ()
-		    (let loop ((exp (read)))
+		    (let loop ((exp (ezd-read)))
 			 (unless (eof-object? exp)
 				 (ezd exp)
-				 (loop (read))))))))
+				 (loop (ezd-read))))))))
 
 (define-ezd-command
     `(include ,string?)

@@ -175,7 +175,7 @@
 	 (if (not (display-handling-events self))
 	     (let loop ()
 		  (unless (zero? (xeventsqueued dpy QUEUEDAFTERREADING))
-			  (ynextevent dpy event)
+			  (xnextevent dpy event)
 			  (display-handling-events! self #t)
 			  (if (eq? (xevent-type event) mappingnotify)
 			      (xrefreshkeyboardmapping event)

@@ -1,4 +1,4 @@
-(use scheme2c-compatibility xlib posix)
+(use scheme2c-compatibility xlib posix srfi-18)
 
 ;; System file tasks
 
@@ -45,3 +45,5 @@
 (include "view.sc")
 (include "graphic.sc")
 (include "events.sc")
+
+(read-eval-draw (command-line-arguments))
