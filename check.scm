@@ -1,4 +1,4 @@
-(use scheme2c-compatibility xlib posix srfi-18)
+(use scheme2c-compatibility xlib posix srfi-18 srfi-1 srfi-4)
 
 ;; System file tasks
 
@@ -35,6 +35,25 @@
 
 (define putprop put!)
 (define getprop get)
+
+(define (remq x list)
+  (delete x list eq?))
+
+;; TODO test this
+(define (xrectangle-list->xrectanglea rl)
+  (let ((v (make-u16vector (* 4 (length rl))))
+        (n 0))
+    (for-each
+      (lambda (r)
+        (u16vector-set! v (+ n 0) (xrectangle-x r))
+        (u16vector-set! v (+ n 1) (xrectangle-y r))
+        (u16vector-set! v (+ n 2) (xrectangle-width r))
+        (u16vector-set! v (+ n 3) (xrectangle-height r))
+        (set! n (+ n 4)))
+      rl)
+    (if (zero? (u16vector-length v))
+        #f
+        (make-locative v))))
 
 (include "commands.sc")
 (include "ezd.sc")
