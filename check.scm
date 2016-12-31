@@ -63,7 +63,8 @@
 (include "drawing.sc")
 (include "view.sc")
 (include "graphic.sc")
-(include "events.sc")
 (include "rectangle.sc")
+(include "events.sc")
+(include "interact.sc")
 
 (read-eval-draw (command-line-arguments))
