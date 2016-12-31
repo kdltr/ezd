@@ -543,7 +543,9 @@
 			      (eq? (xevent-type (let ((ev (make-xevent)))
                                                   (xpeekevent *dpy* ev) ev))
 				   motionnotify))
-			 (loop (xnextevent *dpy*))
+			 (begin
+			   (xnextevent *dpy* event)
+			   (loop event))
 			 (when (and (< -1 (xevent-xmotion-x event)
 				       (window-width window))
 				    (< -1 (xevent-xmotion-y event)
