@@ -371,19 +371,19 @@
 			   (or (display-color->pixel display color)
 			       (display-black display)))
 		       (xsetforeground dpy gc color))
-		   (if stipple
-		       (let ((buffer (make-string 128))
+		   (if stipple ;; TODO Check if this is working properly.
+		       (let ((buffer (make-u16vector 64 0))
 			     (bitmapsize 0))
 			    (let loop ((i 0)
 				       (bits (getprop stipple 'isa-stipple)))
 				 (if (not (null? bits))
-				     (begin (c-shortunsigned-set! buffer i
+				     (begin (u16vector-set! buffer i
 						(car bits))
-					    (loop (+ i 2) (cdr bits)))
-				     (set! bitmapsize (sqrt (* i 8)))))
+					    (loop (+ i 1) (cdr bits)))
+				     (set! bitmapsize (sqrt (* i 16)))))
 			    (xsetstipple dpy gc
 				(xcreatebitmapfromdata dpy window
-				    (cons 'charp buffer) bitmapsize
+				    (make-locative buffer) bitmapsize
 				    bitmapsize))
 			    (xsetfillstyle dpy gc fillstippled)))
 		   (if font
