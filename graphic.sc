@@ -100,7 +100,11 @@
 
 ;;; The null graphic is a graphic that never intersects or draws.
 
-(define null-graphic)
+(define null-graphic
+  (make-graphic 'null-graphic (lambda () '(0 0 0 0))
+                draw-clear draw-clear
+                (lambda (minx miny maxx maxy) #f)))
+
 
 ;;; A BBGRAPHIC represents the mapping of a GRAPHIC object into the current
 ;;; VIEW.  It contains the following slots.
@@ -345,7 +349,4 @@
 ;;; Module reset/initialization procedure.
 
 (define (graphic-module-init)
-  (set! null-graphic (make-graphic 'null-graphic (lambda () '(0 0 0 0))
-                                   draw-clear draw-clear
-                                   (lambda (minx miny maxx maxy) #f)))
   #t)
