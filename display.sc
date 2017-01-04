@@ -228,7 +228,7 @@
 			    (if (null-pointer? fa)
 				(let ((fd (xloadqueryfont (display-dpy display)
 					     "fixed")))
-				     (format stderr-port
+				     (format (current-error-port)
 					     "ezd can't load font: ~a~%"
 					     font-name)
 				     fd)
@@ -279,7 +279,7 @@
 	 (set-xcolor-green! xc (* 256 (cadr rgb)))
 	 (set-xcolor-blue! xc (* 256 (caddr rgb)))
 	 (if (zero? (xalloccolor dpy (display-colormap display) xc))
-	     (begin (format stderr-port "Can't allocate color: ~a~%" color)
+	     (begin (format (current-error-port) "Can't allocate color: ~a~%" color)
 		    (set-xcolor-pixel! xc (display-black display))))
 	 (putprop color 'isa-color rgb)
 	 (putprop color 'private-color (xcolor-pixel xc))

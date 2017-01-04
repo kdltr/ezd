@@ -173,8 +173,8 @@
     (lambda (name)
 	    (let ((rgb (color? name)))
 		 (write `(color-value * * * 0 0 0 0 ,name ,@rgb
-			     ,@(apply convert-rgb->hsv rgb)) stdout-port)
-		 (newline stdout-port))))
+			     ,@(apply convert-rgb->hsv rgb)) (current-output-port))
+		 (newline (current-output-port)))))
 
 ;;; Color values are returned by the following Scheme procedures.
 
