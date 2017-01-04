@@ -105,10 +105,6 @@
 
 (define ezd-log #f)
 
-(define (getenv var)
-  (or (get-environment-variable var)
-      ""))
-
 (eval-when (eval)
     (define env-ezdlog "")
     (define env-ezdnopixmap ""))
@@ -226,7 +222,7 @@
 	     (equal? (substring file (- (string-length file) 3)
 			 (string-length file))
 		     ".sc"))
-	(loadq file)
+	(load file)
 	(with-input-from-file
 	    file
 	    (lambda ()
@@ -252,7 +248,7 @@
 		 (ezd-reset)
 		 (if command-stream (set! ezd-done #t))
 		 (if handling-events
-		     (if (procedure? (top-level-value 'top-level))
+		     (if (feature? 'csi)
 			 (reset)
 			 (exit))))))
 
@@ -286,7 +282,7 @@
     (when (eval *stepper*)
 	  (display-event-handler *display*)
 	  (let loop ()
-	       (yselect *dpy* 1000000 0)
+	       ;; (yselect *dpy* 1000000 0) ;; TODO what the hell is this?
 	       (display-event-handler *display*)
 	       (if (and *stepper* (not *next-step*)) (loop)))))
 

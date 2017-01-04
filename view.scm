@@ -635,9 +635,7 @@
 	    minx miny maxx maxy)
     
     (define (graphics-event? dpy event any)
-	    (let* ((event (cons 'xeventp
-				((lap (x) (POINTER_TSCP (UNSIGNED x))) event)))
-		   (type (xevent-type event)))
+	    (let* ((type (xevent-type event)))
 		  (if (or (and (eq? type GRAPHICSEXPOSE)
 			       (eq? (xevent-xgraphicsexpose-drawable event)
 				    *xwindow*))

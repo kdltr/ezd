@@ -217,7 +217,7 @@
 	      (cdr x)
 	      (let ((f (let ((fa (xloadqueryfont (display-dpy display)
 				    font-name)))
-			    (if (null-pointer? fa)
+			    (if (not fa)
 				(let ((fd (xloadqueryfont (display-dpy display)
 					     "fixed")))
 				     (format (current-error-port)
