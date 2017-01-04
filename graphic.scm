@@ -40,14 +40,6 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-;(declare (unit graphic))
-
-;(declare (uses window view drawing commands ezd))
-
-;(include "scheme2c")
-(include "struct.scm") ;; TODO: make struct an import again!
-;(include "graphic.sch")
-
 ;;; Drawings are composed of GRAPHIC structures with the following fields:
 ;;;
 ;;;	NAME		object name or #f

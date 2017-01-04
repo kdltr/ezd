@@ -40,10 +40,6 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-;(declare (unit commands))
-;(include "scheme2c")
-;(include "commands.sch")
-
 ;;; COMMAND PARSING.
 
 ;;; Helper functions for command argument parsing.

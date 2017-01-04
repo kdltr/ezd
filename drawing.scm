@@ -42,14 +42,6 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-;(declare (unit drawing))
-
-;(declare (uses display window view graphic events commands))
-
-;(include "scheme2c")
-(include "struct")
-;(include "drawing.sch")
-
 ;;; A DRAWING is a structured object consisting of the following fields:
 ;;;
 ;;;	NAME		symbolic name of the drawing.

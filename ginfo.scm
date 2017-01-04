@@ -40,14 +40,6 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-;(declare (unit ginfo))
-
-;(declare (uses commands)) ;; +display
-
-;(include "scheme2c")
-(include "struct")
-;(include "ginfo.sch")
-
 ;;; Set the ISA-COLOR property to the RGB values for X colors as they are
 ;;; found in the input stream.  N.B.  Color names are those recognized by
 ;;; the X server.

@@ -40,7 +40,6 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-;(declare (unit ezd))
 #;    (with xlib
 	  struct
 	  match
@@ -71,11 +70,20 @@
 	  editcolor
 	  transpbuttons)
 
-;(declare (uses commands display window view drawing graphic events))
+(use scheme2c-compatibility xlib posix srfi-18 srfi-1 srfi-4 lolevel extras)
 
-;(include "scheme2c")
-(include "struct")
-;(include "ezd.sch")
+(include "scheme2c.scm")
+(include "struct.scm")
+(include "commands.scm")
+(include "ginfo.scm")
+(include "display.scm")
+(include "window.scm")
+(include "drawing.scm")
+(include "view.scm")
+(include "graphic.scm")
+(include "rectangle.scm")
+(include "events.scm")
+(include "interact.scm")
 
 ;;; Version tag
 

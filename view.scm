@@ -40,14 +40,6 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-;(declare (unit view))
-
-;(declare (uses display window drawing graphic commands events))
-
-;(include "scheme2c")
-(include "struct")
-;(include "view.sch")
-
 ;;; Creates a VIEW composed of the following fields:
 ;;;
 ;;;	DRAWING-NAME	drawing name associated with the view.

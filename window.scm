@@ -41,14 +41,6 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-;(declare (unit window))
-
-;(declare (uses display view drawing graphic commands ginfo events ezd))
-
-;(include "scheme2c")
-(include "struct")
-;(include "window.sch")
-
 ;;; Each WINDOW object is represented by a structure with the following
 ;;; fields:
 ;;;
