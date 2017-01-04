@@ -290,18 +290,17 @@
 
 (define (display-define-variable-color display color initial-color)
     (let* ((dpy (display-dpy display))
-	   (pixel (let ((buffer (make-string 4)))
-		       (if (zero? (xalloccolorcells dpy
+	   (pixel (let ((buffer (make-s32vector 1)))
+		       (if (zero? (xalloccolorcells dpy ;; TODO see why this doesn’t work
 				      (display-colormap display)
-				      0 (type/value->pointer 'unsignedlongap 0)
+				      0 #f
 				      0
-				      (type/value->pointer 'unsignedlongap
-					  buffer)
+				      (make-locative buffer)
 				      1))
 			   (begin (ezd-error 'define-variable-color
 				      "Can't allocate a private color cell")
 				  #f)
-			   (c-int-ref buffer 0)))))
+			   (s32vector-ref buffer 0)))))
 	  (when pixel
 		(putprop color 'private-color pixel)
 		(putprop color 'variable-color #t)
