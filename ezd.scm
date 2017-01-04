@@ -82,6 +82,7 @@
 (include "view.scm")
 (include "graphic.scm")
 (include "rectangle.scm")
+(include "text.scm")
 (include "arc.scm")
 (include "psdraw.scm")
 (include "events.scm")
