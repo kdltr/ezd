@@ -79,7 +79,7 @@
 ;;;	STIPPLE-Y
 ;;;	NEW-TRANSFORM	argument list for new transformation
 
-(define-structure VIEW
+(define-structure view
     drawing-name
     window-name
     (clip-minx #f)
@@ -113,7 +113,7 @@
     (stipple-y 0)
     (new-transform #f))
 
-(define-in-line-structure-access VIEW
+(define-in-line-structure-access view
     drawing-name
     window-name
     clip-minx
@@ -147,38 +147,38 @@
 ;;; information related to the current view is stored in the following
 ;;; global variables.
 
-(define *CURRENT-VIEW* #f)
+(define *current-view* #f)
 
-(define *WINDOW* #f)		;;; From the WINDOW object.
-(define *WIDTH* #f)
-(define *HEIGHT* #f)
-(define *NAME* #f)
-(define *FOREGROUND-NAME* #f)
-(define *BACKGROUND-NAME* #f)
-(define *FOREGROUND* #f)
-(define *BACKGROUND* #f)
-(define *XWINDOW* #f)
+(define *window* #f)		;;; From the WINDOW object.
+(define *width* #f)
+(define *height* #f)
+(define *name* #f)
+(define *foreground-name* #f)
+(define *background-name* #f)
+(define *foreground* #f)
+(define *background* #f)
+(define *xwindow* #f)
 
-(define USER->X #f)		;;; From the VIEW object.
-(define USER->Y #f)
-(define USER->LW #f)
-(define X->USER #f)
-(define Y->USER #f)
-(define USER->WIDTH #f)
-(define USER->HEIGHT #f)
-(define WIDTH->USER #f)
-(define HEIGHT->USER #f)
-(define STIPPLE-X #f)
-(define STIPPLE-Y #f)
+(define user->x #f)		;;; from the view object.
+(define user->y #f)
+(define user->lw #f)
+(define x->user #f)
+(define y->user #f)
+(define user->width #f)
+(define user->height #f)
+(define width->user #f)
+(define height->user #f)
+(define stipple-x #f)
+(define stipple-y #f)
 
-(define *CLIP-BBL* #f)		;;; From the call to SET-VIEW.
+(define *clip-bbl* #f)		;;; From the call to SET-VIEW.
 
 ;;; The current view is swapped by the following function.  One can force
 ;;; the cached values to be returned to their structure by supplying #f as the
 ;;; argument.  The previous value of *CURRENT-VIEW* is returned as the
 ;;; value of the function.
 
-(define (SET-VIEW cview clip-bbl)
+(define (set-view cview clip-bbl)
     (unless (eq? cview *current-view*)
 	    (when *current-view*
 		  (view-user->x! *current-view* user->x)
@@ -229,7 +229,7 @@
 ;;; A bounding box list is clipped to a view by the following procedure.  A
 ;;; newly constructed list of bounding boxes is returned.
 
-(define (CLIP-BBL-TO-VIEW view bbl)
+(define (clip-bbl-to-view view bbl)
     (if (view-clip-minx view)
 	(let ((clip-minx (view-clip-minx view))
 	      (clip-miny (view-clip-miny view))
@@ -258,7 +258,7 @@
 ;;; A bounding box is clipped to a view by the following procedure.  Either a
 ;;; bounding box of #f is returned.
 
-(define (CLIP-BB-TO-VIEW view minx miny maxx maxy)
+(define (clip-bb-to-view view minx miny maxx maxy)
     (if (view-clip-minx view)
 	(let ((clip-minx (view-clip-minx view))
 	      (clip-miny (view-clip-miny view))
@@ -279,9 +279,9 @@
 ;;; views, where each list is a list of intersecting views.  Each sublist is
 ;;; ordered as was the original list of views.
 
-(define (PARTITION-VIEWS views)
+(define (partition-views views)
     
-    (define (INTERSECT? view views)
+    (define (intersect? view views)
 	    (if (pair? views)
 		(let ((v2 (car views)))
 		     (if (and (view-clip-minx view)
@@ -317,21 +317,21 @@
 ;;; new one will be created.  Note that the GC's are actually owned and
 ;;; managed by the view's display object.
 
-(define (CV-GC width color stipple dash font arc)
+(define (cv-gc width color stipple dash font arc)
     (display-gc *display* width (or color *foreground*) *background*
 	stipple stipple-x stipple-y dash font arc *clip-bbl*))
 
 ;;; Points are converted to pixels by the following function.  A line width
 ;;; of #f converts to 0.
 
-(define (POINTS->PIXELS x)
+(define (points->pixels x)
     (if x (inexact->exact (round (* *pixels/point* x))) 0))
 
 ;;; The following procedure checks to see if a drawing name exists in the
 ;;; last checked window name.  It is used in conjuction with WINDOW-EXISTS?
 ;;; to parse the window and drawing within the window names in a command.
 
-(define (DRAWING-IN-LAST-EXISTING-WINDOW? x)
+(define (drawing-in-last-existing-window? x)
     (and (symbol? x)
 	 (let loop ((vl (window-views
 			    (name->window last-existing-window-name))))
@@ -347,14 +347,14 @@
 ;;; drawing over or under the drawings already in the window.  If the drawing
 ;;; is already visible in the window, it will be repositioned.
 
-(define (OVER/UNDER-LAY wname dname over bb)
+(define (over/under-lay wname dname over bb)
     (let* ((window (name->window wname))
 	   (drawing (name->drawing dname))
 	   (views (window-views window)))
 	  
-	  (define (CVT x) (if (list-ref bb 4) (points->pixels x) x))
+	  (define (cvt x) (if (list-ref bb 4) (points->pixels x) x))
 	  
-	  (define (ADD-VIEW views view)
+	  (define (add-view views view)
 		  (window-views! window (if over
 					    (append views (list view))
 					    (cons view views)))
@@ -405,7 +405,7 @@
 ;;; The X window area occupied by a view is "damaged" by the following
 ;;; procedure to force it to be updated when the window is redrawn.
 
-(define (DAMAGE-VIEW-AREA view)
+(define (damage-view-area view)
     (let ((drawing (view-drawing view))
 	  (window (view-window view)))
 	 (set-view view '())
@@ -422,7 +422,7 @@
 ;;; A window name and drawing name is translated to a view by the following
 ;;; procedure.
 
-(define (WINDOW-DRAWING->VIEW window-name drawing-name)
+(define (window-drawing->view window-name drawing-name)
     (let loop ((vl (window-views (name->window window-name))))
 	 (if (pair? vl)
 	     (let ((view (car vl)))
@@ -435,7 +435,7 @@
 
 ;;; A view is deleted by the ezd command DELETE-VIEW.
 
-(define (DELETE-VIEW window-name drawing-name)
+(define (delete-view window-name drawing-name)
     (let* ((view (window-drawing->view window-name drawing-name))
 	   (window (view-window view)))
 	  (window-views! window (remq view (window-views window)))
@@ -458,7 +458,7 @@
 ;;; (in the drawing's coordinate system) of the area of the drawing visible
 ;;; in the view.
 
-(define (HANDLE-VISIBLE-EVENTS view)
+(define (handle-visible-events view)
     (handle-view-events view 'visible #f
 	(list ((view-x->user view) (or (view-clip-minx view) 0))
 	      ((view-y->user view) (or (view-clip-miny view) 0))
@@ -502,7 +502,7 @@
 ;;; transform in the view.  The actual transformation occurs the next time the
 ;;; display is updated.
 
-(define (QUEUE-TRANSFORM window-name drawing-name originx originy scalex
+(define (queue-transform window-name drawing-name originx originy scalex
 	    scaley scalelw)
     (let ((view (window-drawing->view window-name drawing-name))
 	  (originx (and originx (inexact->exact (round originx))))
@@ -532,18 +532,18 @@
 ;;; of views needing visible events is returned.  The events are sent after
 ;;; drawing completes.
 
-(define VISIBLE-EVENT-QUEUE '())
+(define visible-event-queue '())
 
-(define (TRANSFORM-VIEWS views)
+(define (transform-views views)
     (set! visible-event-queue '())
     (for-each transform-a-partition (partition-views views))
     visible-event-queue)
 
-(define (TRANSFORM-A-PARTITION views)
+(define (transform-a-partition views)
     
-    (define (MERGE x l) (if (member x l) l (cons x l)))
+    (define (merge x l) (if (member x l) l (cons x l)))
     
-    (define (ACCUM func l x default)
+    (define (accum func l x default)
 	    (let loop ((v #f) (l l))
 		 (if (pair? l)
 		     (let ((next-v (or (list-ref (car l) x) default)))
@@ -592,7 +592,7 @@
 ;;; Coordinate transformations are performed on an existing view by the
 ;;; following function.
 
-(define (TRANSFORM-A-VIEW view originx originy scalex scaley scalelw)
+(define (transform-a-view view originx originy scalex scaley scalelw)
     (set-view view '())
     (let ((was-originx (view-originx *current-view*))
 	  (was-originy (view-originy *current-view*)))
@@ -636,28 +636,28 @@
 ;;; N.B.: VIEW-COMPILED is required as the optimum case that uses XIFEVENT
 ;;; can only be used if TRANSFORM-REDISPLAY is compiled.
 
-(eval-when (load) (define VIEW-COMPILED #t))
-(eval-when (eval) (define VIEW-COMPILED #f))
+(eval-when (load) (define view-compiled #t))
+(eval-when (eval) (define view-compiled #f))
 
-(define (TRANSFORM-REDISPLAY views damage-all deltax deltay
+(define (transform-redisplay views damage-all deltax deltay
 	    minx miny maxx maxy)
     
-    (define (GRAPHICS-EVENT? dpy event any)
+    (define (graphics-event? dpy event any)
 	    (let* ((event (cons 'xeventp
 				((lap (x) (POINTER_TSCP (UNSIGNED x))) event)))
 		   (type (xevent-type event)))
-		  (if (or (and (eq? type graphicsexpose)
+		  (if (or (and (eq? type GRAPHICSEXPOSE)
 			       (eq? (xevent-xgraphicsexpose-drawable event)
 				    *xwindow*))
-			  (and (eq? type noexpose)
+			  (and (eq? type NOEXPOSE)
 			       (eq? (xevent-xnoexpose-drawable event)
 				    *xwindow*)))
 		      1
 		      0)))
     
-    (define (HANDLE-GRAPHICS-EVENTS)
+    (define (handle-graphics-events)
 	    (let ((event (xifevent *dpy* graphics-event? (cons 'charp 0))))
-		 (when (eq? (xevent-type event) graphicsexpose)
+		 (when (eq? (xevent-type event) GRAPHICSEXPOSE)
 		       (window-expose-bbl! *window*
 			   (merge-bbl (xevent-xgraphicsexpose-x event)
 			       (xevent-xgraphicsexpose-y event)
@@ -672,7 +672,7 @@
 					  event))
 			       (handle-graphics-events)))))
     
-    (define (DAMAGEAREA x y width height)
+    (define (damagearea x y width height)
 	    (window-damage-bbl! *window*
 		(merge-bbl x y (+ x width) (+ y height)
 		    (window-damage-bbl *window*))))
@@ -721,9 +721,9 @@
 ;;; bounding boxes are specified in X's coordinate system.  If no bounding
 ;;; box list is specified, then simply write the additions.
 
-(define (REDRAW-A-VIEW view bbl)
+(define (redraw-a-view view bbl)
     
-    (define (RECOMPUTE-BBGL gl stop)
+    (define (recompute-bbgl gl stop)
 	    (let loop ((gl gl) (head '()) (tail '()))
 		 (if (and (pair? gl) (not (eq? gl stop)))
 		     (let* ((g (car gl))
@@ -735,7 +735,7 @@
 		     (begin (view-bb-head! view head)
 			    (view-bb-tail! view tail)))))
     
-    (define (ADD-AND-DRAW gl)
+    (define (add-and-draw gl)
 	    (let loop ((gl gl) (head (view-bb-head view))
 		       (tail (view-bb-tail view)))
 		 (if (pair? gl)
@@ -750,7 +750,7 @@
 		     (begin (view-bb-head! view head)
 			    (view-bb-tail! view tail)))))
     
-    (define (XDRAW-INTERSECTING-BBGRAPHICS)
+    (define (xdraw-intersecting-bbgraphics)
 	    (let loop ((minx #f) (miny #f) (maxx #f) (maxy #f) (l bbl))
 		 (if (pair? l)
 		     (let ((h (car l)))
@@ -763,7 +763,7 @@
 			     xdraw-bbgraphic
 			     if-in-any-xdraw-bbgraphic)))))
     
-    (define (IF-IN-ANY-XDRAW-BBGRAPHIC bbg)
+    (define (if-in-any-xdraw-bbgraphic bbg)
 	    (let ((minx (bbgraphic-minx bbg))
 		  (miny (bbgraphic-miny bbg))
 		  (maxx (bbgraphic-maxx bbg))
@@ -798,5 +798,5 @@
 
 ;;; Module reset/initialization procedure.
 
-(define (VIEW-MODULE-INIT)
+(define (view-module-init)
     (set! *current-view* #f))

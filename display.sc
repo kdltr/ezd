@@ -52,7 +52,7 @@
 ;;; Display structure holds information specific to a display.  When a display
 ;;; object is created, it will install a system file task to handle events.
 
-(define-structure DISPLAY
+(define-structure display
     name
     (dpy (let ((dpy (xopendisplay name)))
 	      (if (not dpy)
@@ -91,7 +91,7 @@
                                                  (xcreatecolormap dpy
                                                                   (xrootwindow dpy screen)
                                                                   (xvisualinfo-visual vi)
-                                                                  allocnone))
+                                                                  ALLOCNONE))
                               (xvisualinfo-visual vi))
                             default)))))
     (tiny-pixmap (xcreatepixmap (display-dpy self)
@@ -106,7 +106,7 @@
     (private-colors '())
     (cgcs '()))
 
-(define-in-line-structure-access DISPLAY
+(define-in-line-structure-access display
     name
     dpy
     screen
@@ -126,7 +126,7 @@
 ;;; Graphics contexts are represented by a list of CLIPGC objects on the
 ;;; display object.
 
-(define-structure CLIPGC
+(define-structure clipgc
     width		;;; Line width
     color		;;; Foreground color
     background		;;; Background color
@@ -139,7 +139,7 @@
     (stipple-x 0)	;;; Stipple offset
     (stipple-y 0))
 
-(define-in-line-structure-access CLIPGC
+(define-in-line-structure-access clipgc
     width
     color
     background
@@ -157,18 +157,18 @@
 ;;; multiple displays.  The boolean *UPDATE-DISPLAY* is set true when windows
 ;;; need to be redrawn and/or drawing commands are queued.
 
-(define *DISPLAY* #f)
+(define *display* #f)
 
-(define *DPY* #f)
+(define *dpy* #f)
 
-(define *PIXELS/POINT* #f)
+(define *pixels/point* #f)
 
-(define *UPDATE-DISPLAY* #f)
+(define *update-display* #f)
 
 ;;; When an event is available for a display, the following procedure is
 ;;; called.  It will return once it has processed all events. 
 
-(define (DISPLAY-EVENT-HANDLER self)
+(define (display-event-handler self)
     (let ((event (make-xevent))
 	  (dpy (display-dpy self))
 	  (save-current-drawing *current-drawing*))
@@ -177,7 +177,7 @@
 		  (unless (zero? (xeventsqueued dpy QUEUEDAFTERREADING))
 			  (xnextevent dpy event)
 			  (display-handling-events! self #t)
-			  (if (eq? (xevent-type event) mappingnotify)
+			  (if (eq? (xevent-type event) MAPPINGNOTIFY)
 			      (xrefreshkeyboardmapping event)
 			      (let ((window (xwindow->window
 						(xevent-xany-window event))))
@@ -207,7 +207,7 @@
 ;;; A display object is deleted by the following procedure.  The procedure
 ;;; may be called from an event handler.
 
-(define (DISPLAY-DELETE self)
+(define (display-delete self)
     (if (or (display-handling-events self) (not (display-dpy self)))
 	(display-defered-delete! self #t)
 	(let ((dpy (display-dpy self)))
@@ -218,7 +218,7 @@
 ;;; Converts a string font name into a xfontstruct.  An error message is
 ;;; printed on stderr and the xfontstruct for "fixed" is returned on an error.
 
-(define (DISPLAY-FONT->XFONTSTRUCT display font-name)
+(define (display-font->xfontstruct display font-name)
     (let* ((font-name (or font-name "fixed"))
 	   (x (assoc font-name (display-fonts display))))
 	  (if x
@@ -240,7 +240,7 @@
 ;;; Turns a color into a pixel value.  Colors that can't be allocated result
 ;;; in an error message.
 
-(define (DISPLAY-COLOR->PIXEL display color)
+(define (display-color->pixel display color)
     (let ((pc (getprop color 'private-color)))
 	 (if pc
 	     pc
@@ -259,7 +259,7 @@
 
 ;;; Load a cursor into the display and return the Cursor data structure.
 
-(define (DISPLAY-FONT->CURSOR display font)
+(define (display-font->cursor display font)
     (let ((font-cursor (assoc font (display-cursors display))))
 	 (if font-cursor
 	     (cdr font-cursor)
@@ -270,7 +270,7 @@
 
 ;;; Define a new color in the shared color map.
 
-(define (DISPLAY-DEFINE-COLOR display color color-value)
+(define (display-define-color display color color-value)
     (let ((xc (make-xcolor))
 	  (dpy (display-dpy display))
 	  (screen (display-screen display))
@@ -288,7 +288,7 @@
 
 ;;; Define a new color with a mutable private color cell.
 
-(define (DISPLAY-DEFINE-VARIABLE-COLOR display color initial-color)
+(define (display-define-variable-color display color initial-color)
     (let* ((dpy (display-dpy display))
 	   (pixel (let ((buffer (make-string 4)))
 		       (if (zero? (xalloccolorcells dpy
@@ -311,14 +311,14 @@
 
 ;;; Set the value of a color with a private color cell.
 
-(define (DISPLAY-SET-VARIABLE-COLOR display color color-value)
+(define (display-set-variable-color display color color-value)
     (let ((dpy (display-dpy display))
 	  (xc (make-xcolor))
 	  (rgb (color-value->rgb color-value)))
 	 (set-xcolor-red! xc (* 256 (car rgb)))
 	 (set-xcolor-green! xc (* 256 (cadr rgb)))
 	 (set-xcolor-blue! xc (* 256 (caddr rgb)))
-	 (set-xcolor-flags! xc (bit-or dored dogreen doblue))
+	 (set-xcolor-flags! xc (bit-or DORED DOGREEN DOBLUE))
 	 (set-xcolor-pixel! xc (getprop color 'private-color))
 	 (xstorecolor dpy (display-colormap display) xc)
 	 (putprop color 'isa-color rgb)
@@ -326,9 +326,9 @@
 
 ;;; Convert a color-value to a list of RGB values.
 
-(define (COLOR-VALUE->RGB cv)
+(define (color-value->rgb cv)
 
-    (define (COLOR shift) (bit-and 255 (bit-rsh cv shift)))
+    (define (color shift) (bit-and 255 (bit-rsh cv shift)))
 
     (if (symbol? cv)
 	(getprop cv 'isa-color)
@@ -338,7 +338,7 @@
 ;;; following function.  GC's that differ only by their clipping region or
 ;;; stipple offset are shared.
 
-(define (DISPLAY-GC display width color background stipple stipple-x stipple-y
+(define (display-gc display width color background stipple stipple-x stipple-y
 	    dash font arc bbl)
     (let ((dpy (display-dpy display))
 	  (cgc (let loop ((cgcs (display-cgcs display)))
@@ -363,8 +363,8 @@
 	     (let* ((window (display-tiny-pixmap display))
 		    (gc (xcreategc dpy window 0 (make-xgcvalues))))
 		   (xsetlineattributes dpy gc (or width 0)
-		       (if dash lineonoffdash linesolid) capnotlast joinmiter)
-		   (xsetarcmode dpy gc (or arc arcchord))
+		       (if dash LINEONOFFDASH LINESOLID) CAPNOTLAST JOINMITER)
+		   (xsetarcmode dpy gc (or arc ARCCHORD))
 		   (xsetbackground dpy gc background)
 		   (if (symbol? color)
 		       (xsetforeground dpy gc
@@ -385,7 +385,7 @@
 				(xcreatebitmapfromdata dpy window
 				    (make-locative buffer) bitmapsize
 				    bitmapsize))
-			    (xsetfillstyle dpy gc fillstippled)))
+			    (xsetfillstyle dpy gc FILLSTIPPLED)))
 		   (if font
 		       (xsetfont dpy gc
 			   (xfontstruct-fid (display-font->xfontstruct display
@@ -406,7 +406,7 @@
 				   (loop (cdr l) (cons r rl)))
 			      (xsetcliprectangles dpy (clipgc-xgc cgc) 0 0
 				  (xrectangle-list->xrectanglea rl) (length rl)
-				  Unsorted)))
+				  UNSORTED)))
 		     (xsetclipmask dpy (clipgc-xgc cgc) NONE))
 		 (clipgc-bbl! cgc bbl))
 	 (when (and stipple
@@ -419,7 +419,7 @@
 
 ;;; Module reset/initialization.
 
-(define (DISPLAY-MODULE-INIT)
+(define (display-module-init)
     (when *display*
 	  (for-each
 	      (lambda (c)

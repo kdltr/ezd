@@ -72,7 +72,7 @@
     (events '())
     (redraw-seq *redraw-seq*))
 
-(define-in-line-structure-access GRAPHIC
+(define-in-line-structure-access graphic
     name
     compute-bb
     xdraw
@@ -84,7 +84,7 @@
 ;;; The slots of one graphical object are copied to another by the following
 ;;; function.
 
-(define (SET-GRAPHIC! to from)
+(define (set-graphic! to from)
     (graphic-name! to (graphic-name from))
     (graphic-compute-bb! to (graphic-compute-bb from))
     (graphic-xdraw! to (graphic-xdraw from))
@@ -96,11 +96,11 @@
 ;;; A graphic is recognized as representing a clear object by having 
 ;;; DRAW-CLEAR as it's XDRAW procedure.
 
-(define (DRAW-CLEAR) #t)
+(define (draw-clear) #t)
 
 ;;; The null graphic is a graphic that never intersects or draws.
 
-(define NULL-GRAPHIC)
+(define null-graphic)
 
 ;;; A BBGRAPHIC represents the mapping of a GRAPHIC object into the current
 ;;; VIEW.  It contains the following slots.
@@ -111,21 +111,21 @@
 ;;;	MAXX
 ;;;	MAXY
 
-(define-structure BBGRAPHIC
+(define-structure bbgraphic
     graphic
     (minx 0)
     (miny 0)
     (maxx 0)
     (maxy (bbgraphic-bounding-box self)))
 
-(define-in-line-structure-access BBGRAPHIC
+(define-in-line-structure-access bbgraphic
     graphic
     minx
     miny
     maxx
     maxy)
 
-(define (BBGRAPHIC-BOUNDING-BOX self)
+(define (bbgraphic-bounding-box self)
     (let* ((bb ((graphic-compute-bb (bbgraphic-graphic self))))
 	   (minx (inexact->exact (floor (car bb))))
 	   (miny (inexact->exact (floor (cadr bb))))
@@ -140,7 +140,7 @@
 ;;; A BBGRAPHIC's bounding box is updated as required by the following
 ;;; procedure.
 
-(define (UPDATE-BBGRAPHIC bbg)
+(define (update-bbgraphic bbg)
     (let ((g (bbgraphic-graphic bbg)))
 	 (if (eq? (graphic-redraw-seq g) *redraw-seq*)
 	     (bbgraphic-bounding-box bbg))))
@@ -148,39 +148,39 @@
 ;;; A list of BBGRAPHICs is drawn to an X window via the current view by the
 ;;; following procedure.
 
-(define (XDRAW-BBGRAPHIC-LIST bbgl)
+(define (xdraw-bbgraphic-list bbgl)
     (for-each (lambda (bbg) ((graphic-xdraw (bbgraphic-graphic bbg)))) bbgl))
 
 ;;; A BBGRAPHIC is drawn to an X window via the current view by the following
 ;;; procedure.
 
-(define (XDRAW-BBGRAPHIC bbg) ((graphic-xdraw (bbgraphic-graphic bbg))))
+(define (xdraw-bbgraphic bbg) ((graphic-xdraw (bbgraphic-graphic bbg))))
 
 ;;; A list of BBGRAPHICs is drawn in Postscript via the current view by the 
 ;;; following procedure.
 
-(define (PSDRAW-BBGRAPHIC-LIST bbgl)
+(define (psdraw-bbgraphic-list bbgl)
     (for-each (lambda (bbg) ((graphic-psdraw (bbgraphic-graphic bbg)))) bbgl))
 
 ;;; A BBGRAPHIC is drawn in Postscript to the current view by the following
 ;;; procedure.
 
-(define (PSDRAW-BBGRAPHIC bbg) ((graphic-psdraw (bbgraphic-graphic bbg))))
+(define (psdraw-bbgraphic bbg) ((graphic-psdraw (bbgraphic-graphic bbg))))
 
 ;;; The minimum and maximum of pairs of coordinates are computed by the
 ;;; following functions that allow one or both of the arguments to be #F.
 
-(define (BBMIN x y)
+(define (bbmin x y)
     (if (and x y) (min x y) (or x y)))
 
-(define (BBMAX x y)
+(define (bbmax x y)
     (if (and x y) (max x y) (or x y)))
 
 ;;; An ACTION is applied to all members of the BBGRAPHICs list intersecting a
 ;;; rectangle by the following procedure.  The bounding box coordinates are
 ;;; X coordinates.
 
-(define (BBGRAPHICS-INTERSECT bbgl minx miny maxx maxy action)    
+(define (bbgraphics-intersect bbgl minx miny maxx maxy action)
     (if minx
 	(let loop ((bbgl bbgl))
 	     (if (pair? bbgl)
@@ -201,7 +201,7 @@
 ;;; a rectangle by the following procedure.  The bounding box coordinates are
 ;;; X coordinates.
 
-(define (BBGRAPHICS-NOT-INTERSECT bbgl minx miny maxx maxy action)    
+(define (bbgraphics-not-intersect bbgl minx miny maxx maxy action)
     (if minx
 	(let loop ((bbgl bbgl))
 	     (if (pair? bbgl)
@@ -222,7 +222,7 @@
 ;;; by the following function.  Objects currently drawn as well as objects to
 ;;; be drawn are examined.
 
-(define (BBGRAPHICS-REALLY-INTERSECT view minx miny maxx maxy)    
+(define (bbgraphics-really-intersect view minx miny maxx maxy)
     (set-view view '())
     (let ((uminx (min (x->user minx) (x->user maxx)))
 	  (uminy (min (y->user miny) (y->user maxy)))
@@ -261,7 +261,7 @@
 
 ;;; Named graphical objects are constructed by the following function.
 
-(define (EZD-OBJECT name commands)
+(define (ezd-object name commands)
     (let* ((gl (let loop ((cl commands))
 		    (if (pair? cl)
 			(let ((g (ezd-one (car cl))))
@@ -278,7 +278,7 @@
 				(loop (cdr gl)))
 			   #t))))
 	  
-	  (define (BB-REALLY-INTERSECT? uminx uminy umaxx umaxy)
+	  (define (bb-really-intersect? uminx uminy umaxx umaxy)
 		  (let* ((x1 (user->x uminx))
 			 (y1 (user->y uminy))
 			 (x2 (user->x umaxx))
@@ -344,8 +344,8 @@
 
 ;;; Module reset/initialization procedure.
 
-(define (GRAPHIC-MODULE-INIT)
-  (set! NULL-GRAPHIC (make-graphic 'null-graphic (lambda () '(0 0 0 0))
+(define (graphic-module-init)
+  (set! null-graphic (make-graphic 'null-graphic (lambda () '(0 0 0 0))
                                    draw-clear draw-clear
                                    (lambda (minx miny maxx maxy) #f)))
   #t)

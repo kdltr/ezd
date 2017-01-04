@@ -70,7 +70,7 @@
 ;;;			events.
 ;;;	EVENTS		list of events that are for the object "*".
 
-(define-structure DRAWING
+(define-structure drawing
     name
     (head '())
     (tail '())
@@ -87,7 +87,7 @@
 		  (set! *drawings* (cons (list name self) *drawings*))
 		  '())))
 
-(define-in-line-structure-access DRAWING
+(define-in-line-structure-access drawing
     name
     head
     tail
@@ -103,32 +103,32 @@
 ;;; A list of lists associating the name of each drawing with the data
 ;;; structure is maintained in the global *DRAWINGS*.
 
-(define *DRAWINGS* '())
+(define *drawings* '())
 
 ;;; A drawing name can be converted to the appropriate data structure by the
 ;;; function NAME->DRAWING.
 
-(define (NAME->DRAWING name)
+(define (name->drawing name)
     (let ((x (assoc name *drawings*)))
 	 (if x (cadr x) (error 'name->drawing "undefined DRAWING: ~s" name))))
 
 ;;; Boolean to test if a drawing already exists.
 
-(define (DRAWING-EXISTS? name)
+(define (drawing-exists? name)
     (if (assoc name *drawings*) #t #f))
 
 ;;; The name of an object in the current drawing is coverted to the graphic
 ;;; structure representing it by the following function.  It is an error to
 ;;; look up a non-existent object.
 
-(define (NAME->GRAPHIC name)
+(define (name->graphic name)
     (let ((g (getprop name (drawing-name *current-drawing*))))
 	 (if g g (error 'NAME->GRAPHIC "OBJECT does not exist: ~s" name))))
 
 ;;; An object is verified to be the name of a graphic object by the following
 ;;; procedure.
 
-(define (NAME-OF-GRAPHIC? name)
+(define (name-of-graphic? name)
     (and *current-drawing*
 	 (symbol? name)
 	 (getprop name (drawing-name *current-drawing*))))
@@ -136,12 +136,12 @@
 ;;; Most drawing commands have an implied argument, the current drawing.  The
 ;;; global *CURRENT-DRAWING* represents it.
 
-(define *CURRENT-DRAWING* #f)
+(define *current-drawing* #f)
 
 ;;; The ezd command SET-DRAWING is used to set the current drawing.  If a
 ;;; drawing by that name does not exist, then one is created.
 
-(define (SET-DRAWING name)
+(define (set-drawing name)
     (let ((drawing (if (drawing-exists? name)
 		       (name->drawing name)
 		       (make-drawing name))))
@@ -155,7 +155,7 @@
 ;;; The ezd commands SAVE-DRAWING and RESTORE-DRAWING push and pop the current
 ;;; drawing on a stack.  
 
-(define *SAVED-DRAWINGS* '())
+(define *saved-drawings* '())
 
 (define-ezd-command
     `(save-drawing)
@@ -175,7 +175,7 @@
 
 ;;; A drawing is cleared by the following procedure.
 
-(define (DRAWING-CLEAR drawing)
+(define (drawing-clear drawing)
     (let ((dname (drawing-name drawing)))
 	 (for-each
 	     (lambda (g)
@@ -198,7 +198,7 @@
 ;;; The currently selected drawing is cleared by the ezd command CLEAR.
 
 (define-ezd-command
-    '(CLEAR)
+    '(clear)
     "(clear)"
     (lambda () (if *current-drawing* (drawing-clear *current-drawing*))))
 
@@ -206,7 +206,7 @@
 ;;; drawing or relative to another object by the following procedure and
 ;;; commands.
 
-(define (FLOAT/SINK-OBJECT drawing obj-name ref-name float)
+(define (float/sink-object drawing obj-name ref-name float)
     (let ((object (name->graphic obj-name))
 	  (reference (and ref-name (name->graphic ref-name)))
 	  (prev-reference (not ref-name))
@@ -281,9 +281,9 @@
 
 ;;; Command parsers and definition.
 
-(define NAME-OF-GRAPHIC1? #f)
+(define name-of-graphic1? #f)
 
-(define NAME-OF-GRAPHIC2?
+(define name-of-graphic2?
     (let ((name-of-first #f))
 	 (set! name-of-graphic1?
 	       (lambda (x)
@@ -293,24 +293,24 @@
 	 (lambda (x) (and (name-of-graphic? x) (not (eq? x name-of-first))))))
 
 (define-ezd-command
-    `(FLOAT ,name-of-graphic1? (optional ,name-of-graphic2?))
+    `(float ,name-of-graphic1? (optional ,name-of-graphic2?))
     "(float object-name [object-name])"
     (lambda (o-name1 o-name2)
 	    (float/sink-object *current-drawing* o-name1 o-name2 #t)))
 
 (define-ezd-command
-    `(SINK ,name-of-graphic1? (optional ,name-of-graphic2?))
+    `(sink ,name-of-graphic1? (optional ,name-of-graphic2?))
     "(sink object-name [object-name])"
     (lambda (o-name1 o-name2)
 	    (float/sink-object *current-drawing* o-name1 o-name2 #f)))
 
 ;;; A graphic object is added to a drawing by the following procedure.
 
-(define (DRAWING-ADD drawing graphic)
+(define (drawing-add drawing graphic)
     (let ((name (drawing-name drawing))
 	  (object-name (graphic-name graphic)))
 	 
-	 (define (ADD-TO-DRAWING)
+	 (define (add-to-drawing)
 		 (let ((tail (drawing-tail drawing))
 		       (added-tail (drawing-added-tail drawing))
 		       (graphic-list (list graphic)))
@@ -323,7 +323,7 @@
 			  (set-cdr! added-tail graphic-list))
 		      (drawing-added-tail! drawing graphic-list)))
 	 
-	 (define (GRAPHIC-DAMAGED g)
+	 (define (graphic-damaged g)
 		 (drawing-damaged! drawing
 		     (cons (graphic-compute-bb g) (drawing-damaged drawing))))
 	 
@@ -351,7 +351,7 @@
 
 ;;; Module reset/initialization.
 
-(define (DRAWING-MODULE-INIT)
+(define (drawing-module-init)
     (for-each
 	(lambda (name-drawing)
 		(for-each

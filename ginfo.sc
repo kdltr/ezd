@@ -52,7 +52,7 @@
 ;;; found in the input stream.  N.B.  Color names are those recognized by
 ;;; the X server.
 
-(define (COLOR? x)
+(define (color? x)
     (and (symbol? x)
 	 (or (eq? x 'clear)
 	     (getprop x 'isa-color)
@@ -71,16 +71,16 @@
 
 ;;; A color value is either a color name other than clear or an RGB value.
 
-(define (COLOR-VALUE? x)
+(define (color-value? x)
     (and (not (eq? x 'clear)) (or (color? x) (and (exact? x) (>= x 0)))))
 
-(define (NEW-COLOR? x) (and (symbol? x) (not (color? x))))
+(define (new-color? x) (and (symbol? x) (not (color? x))))
 
-(define (VARIABLE-COLOR? x) (getprop x 'variable-color))
+(define (variable-color? x) (getprop x 'variable-color))
 
 ;;; Converts RGB color values to HSV values.
 
-(define (CONVERT-RGB->HSV r g b)
+(define (convert-rgb->hsv r g b)
     (let* ((r (/ r 255))
 	   (g (/ g 255))
 	   (b (/ b 255))
@@ -108,7 +108,7 @@
 
 ;;; Converts HSV color values to RGB values.
 
-(define (CONVERT-HSV->RGB h s v)
+(define (convert-hsv->rgb h s v)
     (let ((scaled-v (inexact->exact (* v 255))))
 	 (if (zero? s)
 	     (list scaled-v scaled-v scaled-v)
@@ -128,7 +128,7 @@
 
 ;;; Users can define their own colors using the DEFINE-COLOR command.
 
-(define (COMMAND-COLOR-VALUE value)
+(define (command-color-value value)
     (if (pair? value)
 	(let ((v 0))
 	     (for-each
@@ -178,19 +178,19 @@
 
 ;;; Color values are returned by the following Scheme procedures.
 
-(define (GET-HSV-COLOR-VALUE name)
+(define (get-hsv-color-value name)
     (and (color? name) (apply convert-rgb->hsv (color? name))))
 
-(define (GET-RGB-COLOR-VALUE name)
+(define (get-rgb-color-value name)
     (color? name))
 
 ;;; A stipple is defined by the following procedure that takes a stipple name
 ;;; and a list of 4, 8, or 16 bit row values.  The bit values are saved on
 ;;; the ISA-STIPPLE property of the name.
 
-(define (DEFINE-STIPPLE name rows)
-    (define (TWO-WIDE x) (bit-or (bit-lsh x 8) x))
-    (define (FOUR-WIDE x)
+(define (define-stipple name rows)
+    (define (two-wide x) (bit-or (bit-lsh x 8) x))
+    (define (four-wide x)
 	    (bit-or (bit-lsh x 12) (bit-lsh x 8) (bit-lsh x 4) x))
     (case (length rows)
 	  ((4)
@@ -238,7 +238,7 @@
 
 ;;; Predicate to test for a stipple and return its bit values when true.
 
-(define (STIPPLE? x) (and (symbol? x) (getprop x 'isa-stipple)))
+(define (stipple? x) (and (symbol? x) (getprop x 'isa-stipple)))
 
 ;;; Users define their own stipples with DEFINE-STIPPLE.
 
@@ -250,7 +250,7 @@
 ;;; Font translation from X to Postscript is handled by this table.  Each
 ;;; X font name is associated with a face and size.
 
-(define *TRANSLATE-FONTS*
+(define *translate-fonts*
     '(("6x10"			"Courier" 10)
       ("6x12"			"Helvetica" 12)
       ("6x13"			"Helvetica" 13)
@@ -354,7 +354,7 @@
 
 ;;; Define an X to Postscript font translation.
 
-(define (DEFINE-FONT xfont psfont size)
+(define (define-font xfont psfont size)
     (set! *translate-fonts* (cons (list xfont psfont size) *translate-fonts*)))
 
 (define-ezd-command
@@ -366,24 +366,24 @@
 ;;; in the list *CURSORS*.  The boolean CURSOR-NAME? confirms that a name
 ;;; is a cursor name.
 
-(define (CURSOR-NAME? x)
+(define (cursor-name? x)
     (let ((name (memq x *cursors*)))
-	 (if name (top-level-value (car name)) #f)))
+	 (if name (eval (car name)) #f))) ;; TODO get rid of this eval
 
-(define *CURSORS*
-    '(XC_num_glyphs XC_X_cursor XC_arrow XC_based_arrow_down XC_based_arrow_up
-      XC_boat XC_bogosity XC_bottom_left_corner XC_bottom_right_cornor
-      XC_button_side XC_bottom_tee XC_box_spiral XC_center_ptr XC_circle
-      XC_clock XC_coffee_mug XC_cross XC_cross_reverse XC_crosshair
-      XC_diamond_cross XC_dot XC_dotbox XC_double_arrow XC_draft_large 
-      XC_draft_small XC_draped_box XC_exchange XC_fleur XC_gobbler XC_gumby
-      XC_hand1 XC_hand2 XC_heart XC_icon XC_iron_cross XC_left_ptr 
-      XC_left_side XC_left_tee XC_leftbutton XC_ll_angle XC_lr_angle
-      XC_man XC_middlebutton XC_mouse XC_pencil XC_pirate XC_plus
-      XC_question_arrow XC_right_ptr XC_right_side XC_right_tee XC_rightbutton
-      XC_rtl_logo XC_sailboat XC_sb_down_arrow XC_sb_h_double_arrow
-      XC_sb_left_arrow XC_sb_right_arrow XC_sb_up_arrow XC_sb_v_double_arrow
-      XC_shuttle XC_sizing XC_spider XC_spraycan XC_star XC_target XC_tcross
-      XC_top_left_arrow XC_top_left_corner XC_top_right_corner
-      XC_top_side XC_top_tee XC_trek XC_ul_angle XC_umbrella XC_ur_angle
-      XC_ur_angle XC_watch XC_xterm))
+(define *cursors*
+    '(XC_NUM_GLYPHS XC_X_CURSOR XC_ARROW XC_BASED_ARROW_DOWN XC_BASED_ARROW_UP
+      XC_BOAT XC_BOGOSITY XC_BOTTOM_LEFT_CORNER XC_BOTTOM_RIGHT_CORNOR
+      XC_BUTTON_SIDE XC_BOTTOM_TEE XC_BOX_SPIRAL XC_CENTER_PTR XC_CIRCLE
+      XC_CLOCK XC_COFFEE_MUG XC_CROSS XC_CROSS_REVERSE XC_CROSSHAIR
+      XC_DIAMOND_CROSS XC_DOT XC_DOTBOX XC_DOUBLE_ARROW XC_DRAFT_LARGE
+      XC_DRAFT_SMALL XC_DRAPED_BOX XC_EXCHANGE XC_FLEUR XC_GOBBLER XC_GUMBY
+      XC_HAND1 XC_HAND2 XC_HEART XC_ICON XC_IRON_CROSS XC_LEFT_PTR
+      XC_LEFT_SIDE XC_LEFT_TEE XC_LEFTBUTTON XC_LL_ANGLE XC_LR_ANGLE
+      XC_MAN XC_MIDDLEBUTTON XC_MOUSE XC_PENCIL XC_PIRATE XC_PLUS
+      XC_QUESTION_ARROW XC_RIGHT_PTR XC_RIGHT_SIDE XC_RIGHT_TEE XC_RIGHTBUTTON
+      XC_RTL_LOGO XC_SAILBOAT XC_SB_DOWN_ARROW XC_SB_H_DOUBLE_ARROW
+      XC_SB_LEFT_ARROW XC_SB_RIGHT_ARROW XC_SB_UP_ARROW XC_SB_V_DOUBLE_ARROW
+      XC_SHUTTLE XC_SIZING XC_SPIDER XC_SPRAYCAN XC_STAR XC_TARGET XC_TCROSS
+      XC_TOP_LEFT_ARROW XC_TOP_LEFT_CORNER XC_TOP_RIGHT_CORNER
+      XC_TOP_SIDE XC_TOP_TEE XC_TREK XC_UL_ANGLE XC_UMBRELLA XC_UR_ANGLE
+      XC_UR_ANGLE XC_WATCH XC_XTERM))

@@ -77,7 +77,7 @@
 ;;;	GC		graphics context for pixmap operations
 ;;;	XWINDOW		X windowid for the window.
 
-(define-structure WINDOW
+(define-structure window
     display
     x
     y
@@ -103,7 +103,7 @@
     (expose-bbl '())
     (damage-bbl '())
     (views '())
-    (cursor (display-font->cursor display xc_left_ptr))
+    (cursor (display-font->cursor display XC_LEFT_PTR))
     (cursors '())
     (gc #f)
     (xwindow (let* ((dpy (display-dpy display))
@@ -124,9 +124,9 @@
 				 (window-height self)
 				 2
 				 (display-visual-depth display)
-				 inputoutput
+				 INPUTOUTPUT
 				 (display-visual display)
-				 (bit-or cwbackpixel cwborderpixel cwcolormap)
+				 (bit-or CWBACKPIXEL CWBORDERPIXEL CWCOLORMAP)
 				 wa))
 		    (gc (xcreategc dpy xwindow 0 (make-xgcvalues))))
 		   (let ((wmh (make-xwmhints)))
@@ -136,13 +136,13 @@
 		   (xstorename dpy xwindow title)
 		   (xseticonname dpy xwindow (symbol->string name))
 		   (xselectinput dpy xwindow
-		       (bit-or keypressmask keyreleasemask
-			       exposuremask
-			       structurenotifymask
-			       ownergrabbuttonmask
-			       buttonpressmask buttonreleasemask
-			       enterwindowmask leavewindowmask
-			       pointermotionmask))
+		       (bit-or KEYPRESSMASK KEYRELEASEMASK
+			       EXPOSUREMASK
+			       STRUCTURENOTIFYMASK
+			       OWNERGRABBUTTONMASK
+			       BUTTONPRESSMASK BUTTONRELEASEMASK
+			       ENTERWINDOWMASK LEAVEWINDOWMASK
+			       POINTERMOTIONMASK))
 		   (xdefinecursor dpy xwindow (window-cursor self))
 		   (xsetforeground dpy gc (window-background self))
 		   (xsetgraphicsexposures *dpy* gc 0)
@@ -153,7 +153,7 @@
 			 (cons (list xwindow self) *xwindow-windows*))
 		   xwindow)))
 
-(define-in-line-structure-access WINDOW
+(define-in-line-structure-access window
     display
     x
     y
@@ -179,22 +179,22 @@
 ;;; A list of lists of window name and the appropriate WINDOW data structure
 ;;; is kept in *NAME-WINDOWS*.
 
-(define *NAME-WINDOWS* '())
+(define *name-windows* '())
 
 ;;; Convert a window name to the WINDOW data structure.
 
-(define (NAME->WINDOW name)
+(define (name->window name)
     (let ((x (assoc name *name-windows*)))
 	 (if x (cadr x) (error 'name->window "WINDOW not defined: ~s" name))))
 
 ;;; See DRAWING-IN-LAST-EXISTING-WINDOW? (view.sc) to see how
 ;;; LAST-EXISTING-WINDOW-NAME is used to parse commands.
 
-(define LAST-EXISTING-WINDOW-NAME #f)
+(define last-existing-window-name #f)
 
 ;;; Boolean to check if a window exists.
 
-(define (WINDOW-EXISTS? name)
+(define (window-exists? name)
     (if (assoc name *name-windows*)
 	(begin (set! last-existing-window-name name)
 	       #t)
@@ -203,18 +203,18 @@
 ;;; A list of lists of X window id and the appropriate WINDOW data structure
 ;;; is kept in *XWINDOW-WINDOWS*
 
-(define *XWINDOW-WINDOWS* '())
+(define *xwindow-windows* '())
 
 ;;; Convert a X window id to a WINDOW data structure.
 
-(define (XWINDOW->WINDOW xwindow)
+(define (xwindow->window xwindow)
     (let ((x (assoc xwindow *xwindow-windows*)))
 	 (if x (cadr x) #f)))
 
 ;;; A drawing window is created by the following procedure.  If the window
 ;;; already exists, it is deleted and recreated.
 
-(define (EZD-WINDOW name x-y width height fixed-size points title
+(define (ezd-window name x-y width height fixed-size points title
 	    foreground-name background-name)
     (let* ((x (if (pair? x-y)
 		  (if points (points->pixels (car x-y)) (car x-y))
@@ -229,18 +229,18 @@
 		       (or title (symbol->string name))
 		       foreground-name background-name))
 		(hints (make-xsizehints)))
-	       (set-xsizehints-flags! hints ussize)
+	       (set-xsizehints-flags! hints USSIZE)
 	       (set-xsizehints-width! hints width)
 	       (set-xsizehints-height! hints height)
 	       (when (pair? x-y)
 		     (set-xsizehints-flags! hints
-			 (bit-or (xsizehints-flags hints) usposition))
+			 (bit-or (xsizehints-flags hints) USPOSITION))
 		     (set-xsizehints-x! hints x)
 		     (set-xsizehints-y! hints y))
 	       (when fixed-size
 		     (set-xsizehints-flags! hints
 			 (bit-or (xsizehints-flags hints)
-				 pminsize pmaxsize))
+				 PMINSIZE PMAXSIZE))
 		     (set-xsizehints-min_width! hints width)
 		     (set-xsizehints-max_width! hints width)
 		     (set-xsizehints-min_height! hints height)
@@ -259,7 +259,7 @@
 
 ;;; A WINDOW is deleted by the following procedure.
 
-(define (WINDOW-DELETE name)
+(define (window-delete name)
     (let ((self (name->window name)))
 	 (for-each
 	     (lambda (view) (delete-view name (view-drawing-name view)))
@@ -319,7 +319,7 @@
 ;;; that contains both.  Adjacent boxes that are equal in size on the one
 ;;; dimension are merged.
 
-(define (MERGE-BBL minx miny maxx maxy bbl)
+(define (merge-bbl minx miny maxx maxy bbl)
     (let loop ((old bbl) (new '()))
 	 (if (pair? old)
 	     (let* ((h (car old))
@@ -347,8 +347,8 @@
 ;;; only event handling "hardwired" into ezd is for expose events and window
 ;;; resizing.  The rest of the events are handled by user event handlers.
 
-(define (WINDOW-EVENT-HANDLER window event)
-    (cond ((eq? (xevent-type event) expose)
+(define (window-event-handler window event)
+    (cond ((eq? (xevent-type event) EXPOSE)
 	   (set! *update-display* #t)
 	   (window-exposed! window #t)		
 	   (window-expose-bbl! window
@@ -356,7 +356,7 @@
 		   (+ (xevent-xexpose-x event) (xevent-xexpose-width event))
 		   (+ (xevent-xexpose-y event) (xevent-xexpose-height event))
 		   (window-expose-bbl window))))
-	  ((eq? (xevent-type event) configurenotify)
+	  ((eq? (xevent-type event) CONFIGURENOTIFY)
 	   (let ((old-width (window-width window))
 		 (old-height (window-height window))
 		 (width (xevent-xconfigure-width event))
@@ -375,7 +375,7 @@
 ;;; Once there are no pending events, the display's event handler calls the
 ;;; following procedure to redraw all views in all windows as needed.
 
-(define (REDRAW-ALL-WINDOWS)
+(define (redraw-all-windows)
     (let ((visible-event-views '())) 
 	 (for-each
 	     (lambda (name-window)
@@ -403,13 +403,13 @@
 ;;; drawing, the image is rendered to a pixmap and then copied to the screen
 ;;; to reduce screen flashes.
 
-(define *PIXMAP* #f)
+(define *pixmap* #f)
 
-(define *PIXMAP-HEIGHT* #f)
+(define *pixmap-height* #f)
 
-(define *PIXMAP-WIDTH* #f)
+(define *pixmap-width* #f)
 
-(define (REDRAW-A-PARTITION window views)
+(define (redraw-a-partition window views)
     (let ((solid-views (let loop ((views views))
 			    (if (pair? views)
 				(if (and (drawing-is-clear
@@ -426,7 +426,7 @@
 	  (clip-maxx #f)
 	  (clip-maxy #f))
 	 
-	 (define (SET-CLIP view)
+	 (define (set-clip view)
 		 ;;; Define the current clipping region.
 		 (set! clip-minx (or (and view (view-clip-minx view)) 0))
 		 (set! clip-miny (or (and view (view-clip-miny view)) 0))
@@ -435,7 +435,7 @@
 		 (set! clip-maxy (or (and view (view-clip-maxy view))
 				     (window-height window))))
 	 
-	 (define (ADD-BBL minx miny maxx maxy)
+	 (define (add-bbl minx miny maxx maxy)
 		 ;;; Add a clipped bounding box to the bounding box list.
 		 (if (not (or (<= maxx clip-minx)
 			      (<= maxy clip-miny)
@@ -446,7 +446,7 @@
 				   (min maxx clip-maxx)
 				   (min maxy clip-maxy) bbl))))
 	 
-	 (define (UNION-VIEW-GRAPHIC compute-bb)
+	 (define (union-view-graphic compute-bb)
 		 ;;; Add a deleted object to the bounding box list.
 		 (let* ((bb (compute-bb))
 			(minx (car bb))
@@ -456,7 +456,7 @@
 		       (if (not (eq? minx maxx))
 			   (add-bbl minx miny maxx maxy))))
 	 
-	 (define (UNION-VIEW view)
+	 (define (union-view view)
 		 ;;; Add changes to a view to the bounding box list.
 		 (cond ((view-new view)
 			(set-view view '())
@@ -481,7 +481,7 @@
 				 union-view-graphic
 				 (drawing-damaged (view-drawing view))))))
 	 
-	 (define (ADD-ADDITIONS-TO-BBL view)
+	 (define (add-additions-to-bbl view)
 		 ;;; Add additions in a view to the bounding box list.
 		 (set-view view '())
 		 (set-clip view)
@@ -489,27 +489,27 @@
 		     (lambda (g) (union-view-graphic (graphic-compute-bb g)))
 		     (drawing-added-head (view-drawing view))))
 	 
-	 (define (UNION-ADDITIONS-TO-UNDERLAYS vl)
+	 (define (union-additions-to-underlays vl)
 		 ;;; Add additions to lower drawings to the bounding box list.
 		 (when (and (pair? vl) (pair? (cdr vl)))
 		       (add-additions-to-bbl (car vl))
 		       (union-additions-to-underlays (cdr vl))))
 	 
-	 (define (ADD-EXPOSE-TO-BBL)
+	 (define (add-expose-to-bbl)
 		 ;;; Add window expose regions to the bounding box list.
 		 (for-each
 		     (lambda (bb) (add-bbl (car bb) (cadr bb)
 				      (caddr bb) (cadddr bb)))
 		     (window-expose-bbl window)))
 	 
-	 (define (ADD-DAMAGE-TO-BBL)
+	 (define (add-damage-to-bbl)
 		 ;;; Add window expose regions to the bounding box list.
 		 (for-each
 		     (lambda (bb) (add-bbl (car bb) (cadr bb)
 				      (caddr bb) (cadddr bb)))
 		     (window-damage-bbl window)))
 	 
-	 (define (REDRAW)
+	 (define (redraw)
 		 ;;; Redraw the union of the damaged and exposed areas in
 		 ;;; each view in order.
 		 (for-each
@@ -564,7 +564,7 @@
 				      (loop (cdr l) (cons r rl)))
 				 (xsetcliprectangles *dpy* (window-gc window)
 				     0 0 (xrectangle-list->xrectanglea rl)
-				     (length rl) Unsorted)))
+				     (length rl) UNSORTED)))
 			(xfillrectangle *dpy* *pixmap* (window-gc window)
 			    0 0 width height)
 			;;; Draw to pixmap and then copy to the window.
@@ -596,7 +596,7 @@
 
 (define *redraw-seq* 0)
 
-(define (DRAWINGS-REDRAWN)
+(define (drawings-redrawn)
     (for-each
 	(lambda (name-drawing)
 		(let ((drawing (cadr name-drawing)))
@@ -610,7 +610,7 @@
 		      
 ;;; Module reset/initialization
 
-(define (WINDOW-MODULE-INIT)
+(define (window-module-init)
     (set! *name-windows* '())
     (set! *xwindow-windows* '())
     (set! *pixmap* #f))

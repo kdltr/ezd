@@ -48,9 +48,9 @@
 
 ;;; Helper functions for command argument parsing.
 
-(define (ACONS x y) (if (eq? #f y) #f (cons x y)))
+(define (acons x y) (if (eq? #f y) #f (cons x y)))
 
-(define (MATCHED-ARGS x y)
+(define (matched-args x y)
     (define (match-list x y)
 	    (if (null? x)
 		'()
@@ -58,7 +58,7 @@
 		      (match-list (cdr x) (if (pair? y) (cdr y) '())))))
     (if (= (length x) 1) (car y) (match-list x y)))
 
-(define (REST-ARGS x y)
+(define (rest-args x y)
     (if (or (null? x) (null? y)) y (rest-args (cdr x) (cdr y))))
 
 ;;; Command parsing is handled by the following procedure.  Its arguments are
@@ -104,7 +104,7 @@
 ;;;
 ;;;	<any other obj>		no value is returned.
 
-(define (ARG-PARSE template args)
+(define (arg-parse template args)
     (if (not (null? template))
 	(let ((x (car template)))
 	     (cond ((and (pair? x) (eq? (car x) 'optional))
@@ -152,24 +152,24 @@
 
 ;;; Generally useful predicates for command decoding.
 
-(define (NON-NEGATIVE? x) (and (number? x) (>= x 0)))
+(define (non-negative? x) (and (number? x) (>= x 0)))
 
-(define (NON-ZERO? x) (and (number? x) (not (= x 0))))
+(define (non-zero? x) (and (number? x) (not (= x 0))))
 
-(define (POSITIVE-NUMBER? x) (and (number? x) (> x 0)))
+(define (positive-number? x) (and (number? x) (> x 0)))
 
-#;(define (ANY? x) #t) ;; Already defined in CHICKEN
+#;(define (any? x) #t) ;; Already defined in CHICKEN
 
-(define (DASH? x) (eq? x 'dash))
+(define (dash? x) (eq? x 'dash))
 
 ;;; ezd commands are defined by calls to the following procedure.  The caller
 ;;; provides the command name (a symbol), the argument parsing template, a
 ;;; string describing the correct form of the command, and the action procedure
 ;;; that is to be called when the command is successfully parsed.
 
-(define EZD-COMMANDS '())
+(define ezd-commands '())
 
-(define (DEFINE-EZD-COMMAND template description action)
+(define (define-ezd-command template description action)
     (let* ((command (car template))
 	   (x (assoc command ezd-commands)))
 	  (if x (set! ezd-commands (delete x ezd-commands)))
@@ -181,9 +181,9 @@
 ;;; This will result in either the message being logged to the stderr-port, or
 ;;; the Scheme error handler error being called.
 
-(define IN-READ-EVAL-DRAW #f)
+(define in-read-eval-draw #f)
 
-(define (EZD-ERROR id form . args)
+(define (ezd-error id form . args)
     (if (not in-read-eval-draw) (apply error id form args))
     (apply format (current-error-port) form args)
     (newline (current-error-port))
@@ -191,6 +191,6 @@
 
 ;;; Module initialization procedure.
 
-(define (COMMANDS-MODULE-INIT)
+(define (commands-module-init)
     (set! in-read-eval-draw #f)
     #t)

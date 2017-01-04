@@ -79,7 +79,7 @@
 
 ;;; Version tag
 
-(define *EZD-VERSION* "15mar93jfb")
+(define *ezd-version* "15mar93jfb")
 
 ;;; The program accepts five command line arguments arguments:
 ;;;
@@ -93,26 +93,26 @@
 ;;; file with EZDLOG's value as its name.  If the environment flag EZDNOPIXMAP
 ;;; is set, then pixmaps are not used for window updates.
 
-(define EZD-DONE #f)
+(define ezd-done #f)
 
-(define EZD-LOG #f)
+(define ezd-log #f)
 
 (define (getenv var)
   (or (get-environment-variable var)
       ""))
 
 (eval-when (eval)
-    (define ENV-EZDLOG "")
-    (define ENV-EZDNOPIXMAP ""))
+    (define env-ezdlog "")
+    (define env-ezdnopixmap ""))
     
 (eval-when (load)
-    (define ENV-EZDLOG (getenv "EZDLOG"))
-    (define ENV-EZDNOPIXMAP (getenv "EZDNOPIXMAP")))
+    (define env-ezdlog (getenv "EZDLOG"))
+    (define env-ezdnopixmap (getenv "EZDNOPIXMAP")))
 
-(define NOPIXMAP (if (eq? env-ezdnopixmap "") #f #t))
+(define nopixmap (if (eq? env-ezdnopixmap "") #f #t))
 
-(define (READ-EVAL-DRAW clargs)
-    (define PAUSE (member "-p" clargs))
+(define (read-eval-draw clargs)
+    (define pause (member "-p" clargs))
     
     
     (set! ezd-log (if (or (member "-l" clargs) (not (equal? env-ezdlog "")))
@@ -153,7 +153,7 @@
 ;;; graphical objects generated are added to the current drawing.  This
 ;;; procedure is the command interface for ezd from Scheme user programs.
 
-(define (EZD . commands)
+(define (ezd . commands)
     (for-each
 	(lambda (c)
 		(let ((value (ezd-one c)))
@@ -165,7 +165,7 @@
 ;;; Execute a single ezd command and return its value.  This is not an external
 ;;; interface.
 
-(define (EZD-ONE command) 
+(define (ezd-one command)
     (if (pair? command)
 	(let* ((x (assoc (car command) ezd-commands))
 	       (template (if x (cadr x)))
@@ -193,7 +193,7 @@
 ;;; needing initialization in order to be rerun must define a reset procedure
 ;;; and have it called from here.
 
-(define (EZD-RESET)
+(define (ezd-reset)
     (ezd-module-init)
     (commands-module-init)
     (display-module-init)
@@ -213,7 +213,7 @@
 ;;; The INCLUDE command loads ezd commands or Scheme expressions (files with
 ;;; a suffix of .sc) from a file.
 
-(define (EZD-INCLUDE file)
+(define (ezd-include file)
     (if (and (>= (string-length file) 3)
 	     (equal? (substring file (- (string-length file) 3)
 			 (string-length file))
@@ -253,16 +253,16 @@
 ;;; *STEPPER* is evaluated.  If it is true, then the program pauses until some
 ;;; event calls NEXT-STEP or *STEPPER* is set to #f.
 
-(define *STEP* #f)	;;; Value associated with this step.
+(define *step* #f)	;;; Value associated with this step.
 
-(define *STEPPER* #f)	;;; Expression to evaluate at each step to decide
+(define *stepper* #f)	;;; Expression to evaluate at each step to decide
 			;;; whether or not to continue.
 
-(define *NEXT-STEP* #f)	;;; Stepper advances when this is true.
+(define *next-step* #f)	;;; Stepper advances when this is true.
 
 ;;; Define the stepper.
 
-(define (STEPPER exp)
+(define (stepper exp)
     (set! *stepper* exp))
 
 (define-ezd-command
@@ -272,7 +272,7 @@
 
 ;;; Test to see if the stepper requires a stop at this step.
 
-(define (STEP exp)
+(define (step exp)
     (set! *step* exp)
     (set! *next-step* #f)
     (when (eval *stepper*)
@@ -289,7 +289,7 @@
 
 ;;; Call this from an event handler to allow further processing.
 
-(define (NEXT-STEP)
+(define (next-step)
     (set! *next-step* #t))
 
 ;;; The PAUSE command waits for some number of milliseconds, or until ezd
@@ -305,5 +305,5 @@
 
 ;;; Module reset/initialization procedure.
 
-(define (EZD-MODULE-INIT)
+(define (ezd-module-init)
     (set! ezd-done #f))

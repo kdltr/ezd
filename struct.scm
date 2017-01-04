@@ -55,12 +55,12 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-(define-syntax DEFINE-STRUCTURE
+(define-syntax define-structure
   (er-macro-transformer
     (lambda (exp rename compare?)
-	    (define NAME (cadr exp))
-	    (define SLOTS (cddr exp))
-	    (define (MAKE-SYM . x)
+	    (define name (cadr exp))
+	    (define slots (cddr exp))
+	    (define (make-sym . x)
 		    (string->symbol
 			(apply string-append
 			       (map (lambda (x)
@@ -68,13 +68,13 @@
 						(symbol->string x)
 						x))
 				    x))))
-	    (define (SLOT-NAME slot) (if (pair? slot) (car slot) slot))
-	    (define (MATCH proc l fail)
+	    (define (slot-name slot) (if (pair? slot) (car slot) slot))
+	    (define (match proc l fail)
 		    (let loop ((l l))
 			 (if (pair? l)
 			     (if (proc (car l)) (car l) (loop (cdr l)))
 			     fail)))
-	    (define (INITIAL-VALUE slot)
+	    (define (initial-value slot)
 		    (if (pair? slot)
 			(match (lambda (x)
 				       (not (and (pair? x)
@@ -82,7 +82,7 @@
 			       (cdr slot)
 			       (car slot))
 			slot))
-	    (define (INITIAL-ARGS)
+	    (define (initial-args)
 		    (let loop ((slots slots))
 			 (if (pair? slots)
 			     (if (eq? (initial-value (car slots))
@@ -91,8 +91,8 @@
 				       (loop (cdr slots)))
 				 (loop (cdr slots)))
 			     '())))
-	    (define (CHECK) `(if (eq? (vector-ref self 0) ',name) self #f))
-	    (define (GET-PUT slot index fname default)
+	    (define (check) `(if (eq? (vector-ref self 0) ',name) self #f))
+	    (define (get-put slot index fname default)
 		    (if (pair? slot)
 			(let ((func (match (lambda (x)
 						   (and (pair? x)
@@ -108,12 +108,12 @@
 					       ,@(cddr func)))
 				 default))
 			default))
-	    (define (GET slot index)
+	    (define (get slot index)
 		    (let ((fname (make-sym name "-" (slot-name slot))))
 			 (get-put slot index fname
 			     `(define (,fname self)
 				      (vector-ref ,(check) ,index)))))
-	    (define (PUT slot index)
+	    (define (put slot index)
 		    (let ((fname (make-sym name "-" (slot-name slot) "!")))
 			 (get-put slot index fname
 			     `(define (,fname self value)
@@ -155,7 +155,7 @@
 ;; This macro is often use in .sch files to expose symbols for structure access.
 ;; That’s why we redefine it so that it exports structure access symbols from modules.
 
-(define-syntax DEFINE-IN-LINE-STRUCTURE-ACCESS
+(define-syntax define-in-line-structure-access
   (er-macro-transformer
     (lambda (exp rename compare?)
       `(void))))

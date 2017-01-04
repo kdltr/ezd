@@ -55,8 +55,8 @@
 ;;; MISC-INFO is event specific information.  It is followed by any additional
 ;;; information that the user wishes to add.
 
-(define (LOG-EVENT . more-misc)
-    (define (LOG port)
+(define (log-event . more-misc)
+    (define (log port)
 	    (format port "(~a ~a ~a ~a ~a ~a ~a ~a"
 		    *user-event-type* *user-event-window* *user-event-drawing*
 		    *user-event-object* *user-event-x* *user-event-y*
@@ -75,14 +75,14 @@
 ;;; The following procedure provides the name of the current drawing for
 ;;; Scheme extensions.  If *current-drawing* is #f then #f is returned.
 
-(define (CURRENT-DRAWING-NAME)
+(define (current-drawing-name)
     (if *current-drawing* (drawing-name *current-drawing*) #f))
 
 ;;; Attributes of an object may be accessed by the following function.  Either
 ;;; a list of values or #f (object doesn't respond to this sort of event) is
 ;;; returned.
 
-(define (GET-ATTRIBUTES drawing object . args)
+(define (get-attributes drawing object . args)
     (cond ((not (attributes-drawing-exists? drawing))
 	   (error 'get-attributes "Arguments is not a drawing name: ~s"
 		  drawing))
@@ -94,13 +94,13 @@
 	  (else (handle-attribute-events drawing object 'get-attributes
 		    args))))
 
-(define (GET-ATTRIBUTE drawing object attribute)
+(define (get-attribute drawing object attribute)
     (car (get-attributes drawing object attribute)))
 
 ;;; Object attributes are set by the following procedure.  It does not return
 ;;; any values.
 
-(define (SET-ATTRIBUTES drawing object . args)
+(define (set-attributes drawing object . args)
     (cond ((not (attributes-drawing-exists? drawing))
 	   (error 'set-attributes "Arguments is not a drawing name: ~s"
 		  drawing))
@@ -114,29 +114,29 @@
 
 ;;; Parsing procedure for attribute access commands.
 
-(define ATTRIBUTES-DRAWING-NAME #f)
+(define attributes-drawing-name #f)
 
-(define (ATTRIBUTES-DRAWING-EXISTS? x)
+(define (attributes-drawing-exists? x)
     (if (and (symbol? x) (drawing-exists? x))
 	(begin (set! attributes-drawing-name x)
 	       #t)
 	#f))
 
-(define (ATTRIBUTES-OBJECT-EXISTS? x)
+(define (attributes-object-exists? x)
     (and (symbol? x) (isa-graphic? (getprop x attributes-drawing-name))))
 
-(define (SET-ATTRIBUTE? x)
+(define (set-attribute? x)
     (and (pair? x) (symbol? (car x)) (null? (cdr (last-pair x)))))
 
-(define (SET-ATTRIBUTE-LIST? x)
+(define (set-attribute-list? x)
     (or (null? x)
 	(and (pair? x) (set-attribute? (car x))
 	     (set-attribute-list? (cdr x)))))
 
-(define (GET-ATTRIBUTE? x)
+(define (get-attribute? x)
     (or (symbol? x) (set-attribute? x)))
 
-(define (GET-ATTRIBUTE-LIST? x)
+(define (get-attribute-list? x)
     (or (null? x)
 	(and (pair? x) (get-attribute? (car x))
 	     (get-attribute-list? (cdr x)))))
@@ -176,16 +176,16 @@
 ;;; object followed by button up.  If the mouse is moved out of the object
 ;;; before the button comes up, then no action will be taken.
 
-(define (CLICK-ON-OBJECT object-name modifiers button action)
+(define (click-on-object object-name modifiers button action)
     
-    (define DOWN #f)
+    (define down #f)
     
-    (define (ON-EXIT) (set! down #f))
+    (define (on-exit) (set! down #f))
     
-    (define (ON-DOWN) (set! down (list *user-event-x* *user-event-y*
+    (define (on-down) (set! down (list *user-event-x* *user-event-y*
 				       *mouse-window-x* *mouse-window-y*)))
     
-    (define (ON-UP)
+    (define (on-up)
 	    (when down
 		  (set! *user-event-type* 'click)
 		  (set! *user-event-misc* down)

@@ -52,13 +52,13 @@
 ;;; Events are represented by event records of the following form.  Lists of
 ;;; events are a part of each drawing and graphic.
 
-(define-structure EVENT
+(define-structure event
     type		;;; Symbolic event type.
     modifier-mask	;;; Button modifier bitmask.
     modifier-names	;;; Button modifier list of symbols.
     action)		;;; Action procedure.
 
-(define-in-line-structure-access EVENT
+(define-in-line-structure-access event
     type
     modifier-mask
     modifier-names
@@ -114,20 +114,20 @@
 ;;; When the event type is SEND, the *USER-EVENT-WINDOW*, *USER-EVENT-X*,
 ;;; and *USER-EVENT-Y* fields are not valid.
 
-(define (WHEN-EVENT name event action)
-    (define (ENCODE-MODIFIER)
+(define (when-event name event action)
+    (define (encode-modifier)
 	    (let loop ((mods (car event)) (mask 0))
 		 (if (pair? mods)
 		     (loop (cdr mods)
 			   (bit-or mask
 				   (cadr (assoc (car mods)
-						`((shift ,shiftmask)
-						  (lock ,lockmask)
-						  (capslock ,lockmask)
-						  (control ,controlmask)
-						  (ctrl ,controlmask)
-						  (meta ,mod1mask)
-						  (compose ,mod1mask))))))
+						`((shift ,SHIFTMASK)
+						  (lock ,LOCKMASK)
+						  (capslock ,LOCKMASK)
+						  (control ,CONTROLMASK)
+						  (ctrl ,CONTROLMASK)
+						  (meta ,MOD1MASK)
+						  (compose ,MOD1MASK))))))
 		     mask)))
     (let ((modifier (if (symbol? event)
 			0
@@ -137,7 +137,7 @@
 		      action
 		      (lambda () (eval action)))))
 	 
-	 (define (DELETE-EVENT evl)
+	 (define (delete-event evl)
 		 (if (pair? evl)
 		     (let ((e (car evl)))
 			  (if (and (equal? (event-type e) type)
@@ -146,7 +146,7 @@
 			      (cons (car evl) (delete-event (cdr evl)))))
 		     '()))
 	 
-	 (define (ADD-EVENT evl)
+	 (define (add-event evl)
 		 (if action
 		     (append evl
 			     (list (make-event type modifier
@@ -178,13 +178,13 @@
 			 (add-event (delete-event (drawing-events
 						      *current-drawing*))))))))
  
-(define (BUTTON-MODIFIER? x)
+(define (button-modifier? x)
     (memq x '(shift meta control ctrl lock capslock hyper super)))
 
-(define (BUTTON-DOWN? x)
+(define (button-down? x)
     (memq x '(button1down button2down button3down button4down button5down)))
 
-(define (WHEN-EVENT? x)
+(define (when-event? x)
     (memq x '(button1down button2down button3down button4down button5down
 		 button1up button2up button3up button4up button5up
 		 enter exit motion keypress keyrelease resize expose overlay
@@ -201,7 +201,7 @@
 ;;; A specific event is looked up in an event list by the following procedure.
 ;;; It returns the event or #f.
 	 
-(define (FIND-WHEN-EVENT events type modifier)
+(define (find-when-event events type modifier)
     (let loop ((events events))
 	 (if (pair? events)
 	     (let ((event (car events)))
@@ -214,7 +214,7 @@
 ;;; When a window is resized or exposed, all drawings expecting the event are
 ;;; notified by the following procedure.
 
-(define (HANDLE-WINDOW-EVENTS window event-type event args)    
+(define (handle-window-events window event-type event args)
     (for-each
 	(lambda (view)
 		(handle-view-events view event-type event args)
@@ -225,7 +225,7 @@
 ;;; procedure is called to invoke the event handlers.  The general event
 ;;; handler (object = *) is called before any specific object event handlers.
 
-(define (HANDLE-VIEW-EVENTS view event-type event args)
+(define (handle-view-events view event-type event args)
     (let ((save-current-drawing *current-drawing*))
 	 (set! *current-drawing* (view-drawing view)) 
 	 (set-view view '())
@@ -246,7 +246,7 @@
 ;;; finds the event handler and calls it.  If the event handler does not exist,
 ;;; then the message is ignored.
 
-(define (HANDLE-ATTRIBUTE-EVENTS drawing object event-type arguments)
+(define (handle-attribute-events drawing object event-type arguments)
     (let ((user-event (find-when-event
 			  (append (drawing-events (name->drawing drawing))
 				  (graphic-events (getprop object drawing)))
@@ -272,42 +272,42 @@
 ;;; changes are made to drawings displayed in the window containing the
 ;;; mouse.
 
-(define *MOUSE-X* 0)
+(define *mouse-x* 0)
 
-(define *MOUSE-Y* 0)
+(define *mouse-y* 0)
 
-(define *MOUSE-XWINDOW* #f)
+(define *mouse-xwindow* #f)
 
-(define *MOUSE-WINDOW* #f)
+(define *mouse-window* #f)
 
-(define *MOUSE-WINDOW-X* 0)
+(define *mouse-window-x* 0)
 
-(define *MOUSE-WINDOW-Y* 0)
+(define *mouse-window-y* 0)
 
-(define *MOUSE-VIEW* #f)
+(define *mouse-view* #f)
 
-(define *MOUSE-OBJECT* #f)
+(define *mouse-object* #f)
 
-(define *MOUSE-BUTTON1* #f)
+(define *mouse-button1* #f)
 
-(define *MOUSE-BUTTON2* #f)
+(define *mouse-button2* #f)
 
-(define *MOUSE-BUTTON3* #f)
+(define *mouse-button3* #f)
 
-(define *MOUSE-BUTTON4* #f)
+(define *mouse-button4* #f)
 
-(define *MOUSE-BUTTON5* #f)
+(define *mouse-button5* #f)
 
 ;;; Mouse state is maintained by the following procedure.
 	 
-(define (UPDATE-MOUSE event)
+(define (update-mouse event)
     (let ((event-type (xevent-type event)))
-	 (cond ((or (eq? event-type buttonpress)
-		    (eq? event-type buttonrelease))
+	 (cond ((or (eq? event-type BUTTONPRESS)
+		    (eq? event-type BUTTONRELEASE))
 		(set! *mouse-x* (xevent-xbutton-x_root event))
 		(set! *mouse-y* (xevent-xbutton-y_root event))
 		(set! *mouse-xwindow* (xevent-xbutton-window event))
-		(if (eq? event-type buttonpress)
+		(if (eq? event-type BUTTONPRESS)
 		    (case (xevent-xbutton-button event)
 			  ((1) (set! *mouse-button1* #t))
 			  ((2) (set! *mouse-button2* #t))
@@ -320,18 +320,18 @@
 			  ((3) (set! *mouse-button3* #f))
 			  ((4) (set! *mouse-button4* #f))
 			  ((5) (set! *mouse-button5* #f)))))
-	       ((eq? event-type enternotify)
+	       ((eq? event-type ENTERNOTIFY)
 		(set! *mouse-x* (xevent-xcrossing-x_root event))
 		(set! *mouse-y* (xevent-xcrossing-y_root event))
 		(set! *mouse-xwindow* (xevent-xcrossing-window event))
 		(set! *mouse-object* ""))
-	       ((eq? event-type leavenotify)
+	       ((eq? event-type LEAVENOTIFY)
 		(set! *mouse-x* (xevent-xcrossing-x_root event))
 		(set! *mouse-y* (xevent-xcrossing-y_root event))
 		(set! *mouse-window* #f)
 		(set! *mouse-xwindow* #f)
 		(set! *mouse-object* ""))
-	       ((eq? event-type motionnotify)
+	       ((eq? event-type MOTIONNOTIFY)
 		(set! *mouse-x* (xevent-xmotion-x_root event))
 		(set! *mouse-y* (xevent-xmotion-y_root event))
 		(set! *mouse-xwindow* (xevent-xmotion-window event))))
@@ -346,20 +346,20 @@
 
 ;;; X event code to event name conversion.
 
-(define (EVENT->NAME code)
-    (cond ((eq? code motionnotify) 'motionnotify)
-	  ((eq? code buttonpress) 'buttonpress)
-	  ((eq? code buttonrelease) 'buttonrelease)
-	  ((eq? code enternotify) 'enternotify)
-	  ((eq? code leavenotify) 'leavenotify)
-	  ((eq? code expose) 'expose)
-	  ((eq? code keypress) 'keypress)
-	  ((eq? code keyrelease) 'keyrelease)
+(define (event->name code)
+    (cond ((eq? code MOTIONNOTIFY) 'motionnotify)
+	  ((eq? code BUTTONPRESS) 'buttonpress)
+	  ((eq? code BUTTONRELEASE) 'buttonrelease)
+	  ((eq? code ENTERNOTIFY) 'enternotify)
+	  ((eq? code LEAVENOTIFY) 'leavenotify)
+	  ((eq? code EXPOSE) 'expose)
+	  ((eq? code KEYPRESS) 'keypress)
+	  ((eq? code KEYRELEASE) 'keyrelease)
 	  (else code)))
 
 ;;; Translate X button events to button symbol.
 	 
-(define (BUTTON-DOWN-SYMBOL event)
+(define (button-down-symbol event)
     (case (xevent-xbutton-button event)
 	  ((1) 'button1down)
 	  ((2) 'button2down)
@@ -367,7 +367,7 @@
 	  ((4) 'button4down)
 	  ((5) 'button5down)))
 	 
-(define (BUTTON-UP-SYMBOL event)
+(define (button-up-symbol event)
     (case (xevent-xbutton-button event)
 	  ((1) 'button1up)
 	  ((2) 'button2up)
@@ -379,7 +379,7 @@
 ;;; procedure.  Each time the mouse has moved, it is called with a window and
 ;;; position in window.
 	 
-(define (EXIT-ENTER event window x y)
+(define (exit-enter event window x y)
     (let ((was-in *mouse-object*)
 	  (was-in-view *mouse-view*)
 	  (was-x *mouse-window-x*)
@@ -426,7 +426,7 @@
 ;;; Return a list of possible events for a given window and the current mouse
 ;;; object.
 	 
-(define (IS-IN-EVENTS)
+(define (is-in-events)
     (if (isa-graphic? *mouse-object*)
 	(append (graphic-events *mouse-object*)
 		(drawing-events (view-drawing *mouse-view*)))
@@ -435,25 +435,25 @@
 ;;; Signal a possible user event.  Once the user event has been run, the mouse
 ;;; position is recomputed if there was anything drawn in the mouse window.
 
-(define *CLEAN-MOUSE-WINDOW* #f)
+(define *clean-mouse-window* #f)
 
-(define *USER-EVENT-WINDOW* #f)
+(define *user-event-window* #f)
 
-(define *USER-EVENT-DRAWING* #f)
+(define *user-event-drawing* #f)
 
-(define *USER-EVENT-OBJECT* #f)
+(define *user-event-object* #f)
 
-(define *USER-EVENT-X* #f)
+(define *user-event-x* #f)
 
-(define *USER-EVENT-Y* #f)
+(define *user-event-y* #f)
 
-(define *USER-EVENT-TYPE* #f)
+(define *user-event-type* #f)
 
-(define *USER-EVENT-XEVENT* #f)
+(define *user-event-xevent* #f)
 
-(define *USER-EVENT-MISC* #f)
+(define *user-event-misc* #f)
 
-(define (USER-ACTION user-event view object user-event-type event misc)
+(define (user-action user-event view object user-event-type event misc)
     (when user-event
 	  (if *trace-events* (format *trace-events* "~s " user-event-type))
 	  (if object
@@ -488,15 +488,15 @@
 ;;; that object's event handler is called with the appropriate event, EXIT and
 ;;; ENTER events are generated as needed.
 
-(define *TRACE-EVENTS* #f)
+(define *trace-events* #f)
 
-(define (HANDLE-WHEN-EVENTS window event)
+(define (handle-when-events window event)
     (let ((event-type (xevent-type event)))
 	 
 	 (if *trace-events*
 	     (format *trace-events* "X: ~s ~s ==> " (window-name window)
 		     (event->name event-type)))
-	 (cond ((eq? event-type buttonpress)
+	 (cond ((eq? event-type BUTTONPRESS)
 		(update-mouse event)
 		(exit-enter event window
 		    (xevent-xbutton-x event) (xevent-xbutton-y event))
@@ -507,7 +507,7 @@
 			 (user-action user-event *mouse-view* *mouse-object*
 			     (button-down-symbol event) event
 			     (event-modifier-names user-event)))))
-	       ((eq? event-type buttonrelease)
+	       ((eq? event-type BUTTONRELEASE)
 		(update-mouse event)
 		(exit-enter event window
 		    (xevent-xbutton-x event) (xevent-xbutton-y event))
@@ -516,33 +516,33 @@
 			(button-up-symbol event) 0)
 		    *mouse-view* *mouse-object* (button-up-symbol event)
 		    event '()))
-	       ((eq? event-type enternotify)
+	       ((eq? event-type ENTERNOTIFY)
 		(update-mouse event)
 		(exit-enter event window (xevent-xcrossing-x event)
 		    (xevent-xcrossing-y event)))
-	       ((eq? event-type leavenotify)
+	       ((eq? event-type LEAVENOTIFY)
 		(let ((was-in *mouse-object*)
 		      (was-in-view *mouse-view*)
 		      (was-in-exit (find-when-event (is-in-events) 'exit 0)))
 		     (update-mouse event)
 		     (user-action was-in-exit was-in-view was-in
 			 'exit event '(#f #f #f))))
-	       ((eq? event-type keypress)
+	       ((eq? event-type KEYPRESS)
 		(user-action
 		    (find-when-event (is-in-events) 'keypress 0)
 		    *mouse-view* *mouse-object* 'keypress event
 		    (ylookupstring event #t)))
-	       ((eq? event-type keyrelease)
+	       ((eq? event-type KEYRELEASE)
 		(user-action
 		    (find-when-event (is-in-events) 'keyrelease 0)
 		    *mouse-view* *mouse-object* 'keyrelease event
 		    (ylookupstring event #t)))
-	       ((eq? event-type motionnotify)
+	       ((eq? event-type MOTIONNOTIFY)
 		(let loop ((event event))
-		     (if (and (> (xeventsqueued *dpy* queuedafterreading) 0)
+		     (if (and (> (xeventsqueued *dpy* QUEUEDAFTERREADING) 0)
 			      (eq? (xevent-type (let ((ev (make-xevent)))
                                                   (xpeekevent *dpy* ev) ev))
-				   motionnotify))
+				   MOTIONNOTIFY))
 			 (begin
 			   (xnextevent *dpy* event)
 			   (loop event))
@@ -554,13 +554,13 @@
 			       (exit-enter event window
 				   (xevent-xmotion-x event)
 				   (xevent-xmotion-y event))))))
-	       ((eq? event-type expose)
+	       ((eq? event-type EXPOSE)
 		(handle-window-events window 'expose event '())))
 	 (if *trace-events* (format *trace-events* "~%"))))
 
 ;;; Module reset/initialization
 
-(define (EVENTS-MODULE-INIT)
+(define (events-module-init)
     (set! *mouse-x* 0)
     (set! *mouse-y* 0)
     (set! *mouse-xwindow* #f)
