@@ -13,7 +13,7 @@
   (void))
 
 (define (run-tasks escape-file)
-  (let ((ready (file-select (cons escape-file (map car *tasks*)) #f)))
+  (let-values (((ready _) (file-select (cons escape-file (map car *tasks*)) #f)))
     (if (member escape-file ready)
         #t
         (begin

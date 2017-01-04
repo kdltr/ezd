@@ -82,6 +82,7 @@
 (include "view.scm")
 (include "graphic.scm")
 (include "rectangle.scm")
+(include "psdraw.scm")
 (include "events.scm")
 (include "interact.scm")
 
@@ -110,8 +111,8 @@
     (define env-ezdnopixmap ""))
     
 (eval-when (load)
-    (define env-ezdlog (getenv "EZDLOG"))
-    (define env-ezdnopixmap (getenv "EZDNOPIXMAP")))
+    (define env-ezdlog (or (getenv "EZDLOG") ""))
+    (define env-ezdnopixmap (or (getenv "EZDNOPIXMAP") "")))
 
 (define nopixmap (if (eq? env-ezdnopixmap "") #f #t))
 
