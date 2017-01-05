@@ -136,8 +136,8 @@
 		   (ezd `(save-cursor ,*user-event-window*)
 			`(set-cursor ,*user-event-window*
 			     ,(if vertical
-				  'xc_sb_v_double_arrow
-				  'xc_sb_h_double_arrow))))
+				  'XC_SB_V_DOUBLE_ARROW
+				  'XC_SB_H_DOUBLE_ARROW))))
 		  ((and *mouse-button1* (not *mouse-button2*)
 			(eq? was-inside 'on))
 		   (set! inside 'on)
@@ -145,8 +145,8 @@
 		   (ezd `(save-cursor ,*user-event-window*)
 			`(set-cursor ,*user-event-window*
 			     ,(if vertical
-				  'xc_sb_v_double_arrow
-				  'xc_sb_h_double_arrow)))
+				  'XC_SB_V_DOUBLE_ARROW
+				  'XC_SB_H_DOUBLE_ARROW)))
 		   (motion))))
     
     (define (exit)

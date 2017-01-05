@@ -113,7 +113,7 @@
     
     (define (enter-object)
 	    (ezd `(save-cursor ,*user-event-window*)
-		 `(set-cursor ,*user-event-window* xc_pencil)))
+		 `(set-cursor ,*user-event-window* XC_PENCIL)))
     
     (define (exit-object)
 	    (ezd `(restore-cursor ,*user-event-window*)))

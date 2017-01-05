@@ -362,6 +362,8 @@
     (let ((name (memq x *cursors*)))
 	 (if name (eval (car name)) #f))) ;; TODO get rid of this eval
 
+(eval '(import xlib)) ;; TODO … and this one (I know, I am lazy…)
+
 (define *cursors*
     '(XC_NUM_GLYPHS XC_X_CURSOR XC_ARROW XC_BASED_ARROW_DOWN XC_BASED_ARROW_UP
       XC_BOAT XC_BOGOSITY XC_BOTTOM_LEFT_CORNER XC_BOTTOM_RIGHT_CORNOR
