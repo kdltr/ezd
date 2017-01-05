@@ -70,12 +70,7 @@
 	  editcolor
 	  transpbuttons)
 
-(module ezd (*ezd-version*
-             ezd-log
-             nopixmap
-             read-eval-draw
-             ezd
-             ezd-one)
+(module ezd * ;; TODO write the right export list (from sch files)
 
 (import scheme chicken)
 
