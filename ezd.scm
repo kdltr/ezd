@@ -86,6 +86,7 @@
 (include "view.scm")
 (include "graphic.scm")
 (include "rectangle.scm")
+(include "line.scm")
 (include "text.scm")
 (include "arc.scm")
 (include "quilt.scm")
