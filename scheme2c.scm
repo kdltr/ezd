@@ -30,6 +30,14 @@
       (run-tasks (port->fileno (current-input-port)))))
   (read))
 
+(define (ezd-repl)
+  (display "#;> ")
+  (flush-output)
+  (let ((in (ezd-read)))
+    (unless (eof-object? in)
+      (print (eval in))
+      (ezd-repl))))
+
 (define putprop put!)
 (define getprop get)
 

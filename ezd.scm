@@ -131,7 +131,7 @@
 		      #f))
     (set! nopixmap (or (member "-nopixmap" clargs) nopixmap))
     (if (member "-i" clargs)
-	(repl)
+	(ezd-repl)
 	(let ((old-reset reset))
 	     (if (and (not (member "-p" clargs)) (not (member "-s" clargs)))
 		 (set-signal-handler! 2 #f))
