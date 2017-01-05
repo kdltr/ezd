@@ -78,6 +78,7 @@
 
 (include "scheme2c.scm")
 (include "struct.scm")
+(include "match.scm")
 (include "commands.scm")
 (include "ginfo.scm")
 (include "display.scm")
@@ -93,6 +94,7 @@
 (include "psdraw.scm")
 (include "events.scm")
 (include "interact.scm")
+(include "textree.scm")
 
 ;;; Version tag
 
