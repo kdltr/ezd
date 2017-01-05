@@ -248,7 +248,7 @@
 	  ;;; Step across the line looking to break or join as needed.
 	  (let loop
 	       ((line-width
-		    (if (string=? line "")
+		    (if (equal? line "")
 			0
 			(let* ((dim (make-xcharstruct))
 			       (extent (xtextextents font old-text 1
