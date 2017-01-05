@@ -95,6 +95,7 @@
 (include "events.scm")
 (include "interact.scm")
 (include "stringinput.scm")
+(include "popupmenu.scm")
 (include "buttons.scm")
 (include "slider.scm")
 (include "textree.scm")
