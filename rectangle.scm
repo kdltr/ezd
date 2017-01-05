@@ -178,7 +178,7 @@
 		       (lambda (minx miny maxx maxy)
 			       (let ((region (begin (load-buffer)
 						    (xpolygonregion
-							(cons 'xpointap buffer)
+							(make-locative buffer)
 							point-count
 							EVENODDRULE))))
 				    (define (in? x y)
