@@ -88,6 +88,7 @@
 (include "rectangle.scm")
 (include "text.scm")
 (include "arc.scm")
+(include "quilt.scm")
 (include "psdraw.scm")
 (include "events.scm")
 (include "interact.scm")
