@@ -42,7 +42,7 @@
 ;;;
 ;;;	csi -s dragon.scm
 
-(use ezd)
+(use ezd xlib)
 
 ;;; The following globals control how tiles are drawn.
 
@@ -214,7 +214,7 @@
 	 
 	 (define (clear)
 		 (if visible
-		     (set! *visible-tiles* (remq! self *visible-tiles*)))
+		     (set! *visible-tiles* (delete! self *visible-tiles*)))
 		 (set! visible #f)
 		 (ezd '(set-drawing dragon)
 		      `(object ,name)))
@@ -452,7 +452,7 @@
 
 (define (new-game)
     (ezd '(save-cursor dragon)
-	 '(set-cursor dragon xc_watch)
+	 '(set-cursor dragon XC_WATCH)
 	 '(set-drawing dragon)
 	 '(clear)
 	 `(object background (fill-rectangle 0 0 ,*window-width*
@@ -474,7 +474,7 @@
 ;;; Undo the previous move.
 
 (define (undo)
-    (when *deleted-tiles*
+    (when (pair? *deleted-tiles*)
 	  (when *selected-tile*
 		(*selected-tile* 'lowlight)
 		(set! *selected-tile* #f))
@@ -490,7 +490,7 @@
 	 
 	 (define (lowlight)
 		 (ezd '(save-cursor dragon)
-		      '(set-cursor dragon xc_watch))
+		      '(set-cursor dragon XC_WATCH))
 		 (for-each (lambda (tile) (tile 'lowlight)) high-tiles)
 		 (if *selected-tile* (*selected-tile* 'highlight))
 		 (ezd '(set-drawing dragon)
@@ -510,7 +510,7 @@
 			       #f))))
 	 
 	 (ezd '(save-cursor dragon)
-	      '(set-cursor dragon xc_watch))
+	      '(set-cursor dragon XC_WATCH))
 	 (if *selected-tile* (*selected-tile* 'lowlight))
 	 (for-each
 	     (lambda (tile)
