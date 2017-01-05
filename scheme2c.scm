@@ -9,11 +9,11 @@
 (define (enable-system-file-tasks flag)
   (set! *tasks-enabled* flag))
 
-(define (wait-system-file exp)
-  (void))
-
-(define (run-tasks escape-file)
-  (let-values (((ready _) (file-select (cons escape-file (map car *tasks*)) #f)))
+(define (wait-system-file escape-file)
+  (let-values (((ready _) (file-select (if escape-file
+                                           (cons escape-file (map car *tasks*))
+                                           (map car *tasks*))
+                                       #f)))
     (if (member escape-file ready)
         #t
         (begin
@@ -21,13 +21,13 @@
             (lambda (fd)
               ((caddr (assoc fd *tasks*))))
             ready)
-          (run-tasks escape-file)))))
+          (wait-system-file escape-file)))))
 
 (define (ezd-read)
   (when (and (not (char-ready?)) *tasks-enabled*)
     (let ((idle-tasks (map cadr *tasks*)))
       (for-each (lambda (thunk) (thunk)) idle-tasks)
-      (run-tasks (port->fileno (current-input-port)))))
+      (wait-system-file (port->fileno (current-input-port)))))
   (read))
 
 (define (ezd-repl)
