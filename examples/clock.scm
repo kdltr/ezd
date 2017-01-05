@@ -3,15 +3,9 @@
 ;;; (Y goes up) coordinate system.  Click button 3 on the background to quit.
 ;;; To run:
 ;;;
-;;; 	csh >ezd -i
-;;;	Scheme->C -- 28sep90jfb -- Copyright 1989 Digital Equipment ...
-;;;	> (load "clock.sc")
-;;;	CLOCK
-;;;	"clock.sc"
-;;;	> (clock 45)
-;;;	#F
-;;;	> > ^D
-;;;	csh >
+;;; 	csi -s clock.scm
+
+(use ezd)
 
 (define (clock time)
     
@@ -99,3 +93,6 @@
 	 `(when cover button1up ,cover-button1up)
 	 `(when cover motion ,cover-motion))
     (draw-hands))
+
+(clock 45)
+(ezd '(pause))
