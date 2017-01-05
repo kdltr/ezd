@@ -96,6 +96,7 @@
 (include "interact.scm")
 (include "slider.scm")
 (include "textree.scm")
+(include "transpbuttons.scm")
 
 ;;; Version tag
 
