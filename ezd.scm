@@ -99,6 +99,9 @@
 (include "buttons.scm")
 (include "slider.scm")
 (include "textree.scm")
+(include "jtextree.scm")
+(include "textdrawing.scm")
+(include "mouseedit.scm")
 (include "transpbuttons.scm")
 
 ;;; Version tag
