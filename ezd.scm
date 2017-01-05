@@ -94,6 +94,7 @@
 (include "psdraw.scm")
 (include "events.scm")
 (include "interact.scm")
+(include "buttons.scm")
 (include "slider.scm")
 (include "textree.scm")
 (include "transpbuttons.scm")
