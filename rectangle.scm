@@ -170,7 +170,7 @@
 				   (pscolor color)
 				   (pscommand "newpath")
 				   (let loop ((pl points) (cmd "moveto"))
-					(when pl
+					(when (pair? pl)
 					      (pscommand (caar pl)
 						  (cadar pl) cmd)
 					      (loop (cdr pl) "lineto")))
