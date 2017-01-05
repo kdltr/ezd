@@ -1,0 +1,13 @@
+(compile -s -J ezd.scm)
+(compile -s ezd.import.scm)
+(compile -o ezd ezdprog.scm)
+
+(install-extension
+ 'ezd
+ '("ezd.so" "ezd.import.so")
+ '((version "0.1")))
+
+(install-program
+  'ezd
+  '("ezd")
+  '((version "0.1")))

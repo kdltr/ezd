@@ -70,6 +70,15 @@
 	  editcolor
 	  transpbuttons)
 
+(module ezd (*ezd-version*
+             ezd-log
+             nopixmap
+             read-eval-draw
+             ezd
+             ezd-one)
+
+(import scheme chicken)
+
 (use scheme2c-compatibility xlib posix srfi-18 srfi-1 srfi-4 lolevel extras)
 
 (include "scheme2c.scm")
@@ -314,3 +323,5 @@
 
 (define (ezd-module-init)
     (set! ezd-done #f))
+
+)
