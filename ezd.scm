@@ -314,7 +314,7 @@
     (when (eval *stepper*)
 	  (display-event-handler *display*)
 	  (let loop ()
-	       ;; (yselect *dpy* 1000000 0) ;; TODO what the hell is this?
+	       (yselect *dpy* 1000000 0)
 	       (display-event-handler *display*)
 	       (if (and *stepper* (not *next-step*)) (loop)))))
 

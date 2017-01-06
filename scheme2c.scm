@@ -59,6 +59,12 @@
         #f
         (make-locative v))))
 
+(define (yselect dpy sec nsec)
+  (let ((dpy-fd (xconnectionnumber dpy))
+        (timeout (+ sec (/ nsec (expt 10 9)))))
+    (if (not (zero? (xpending dpy)))
+        dpy
+        (file-select (list dpy-fd) '() timeout))))
  
 ;; Macros that help the Scheme2c to CHICKEN conversion
 
