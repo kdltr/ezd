@@ -44,7 +44,6 @@
 (define (remq x list)
   (delete x list eq?))
 
-;; TODO test this
 (define (xrectangle-list->xrectanglea rl)
   (let ((v (make-u16vector (* 4 (length rl))))
         (n 0))

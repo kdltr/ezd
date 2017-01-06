@@ -362,7 +362,7 @@
 			   (or (display-color->pixel display color)
 			       (display-black display)))
 		       (xsetforeground dpy gc color))
-		   (if stipple ;; TODO Check if this is working properly.
+		   (if stipple
 		       (let ((buffer (make-u16vector 64 0))
 			     (bitmapsize 0))
 			    (let loop ((i 0)
