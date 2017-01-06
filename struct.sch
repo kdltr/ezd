@@ -55,12 +55,11 @@
 ;* ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
 ;* SOFTWARE.
 
-(define-syntax define-structure
-  (er-macro-transformer
-    (lambda (exp rename compare?)
-	    (define name (cadr exp))
-	    (define slots (cddr exp))
-	    (define (make-sym . x)
+(define-macro DEFINE-STRUCTURE
+    (lambda (exp expander)
+	    (define NAME (cadr exp))
+	    (define SLOTS (cddr exp))
+	    (define (MAKE-SYM . x)
 		    (string->symbol
 			(apply string-append
 			       (map (lambda (x)
@@ -68,13 +67,13 @@
 						(symbol->string x)
 						x))
 				    x))))
-	    (define (slot-name slot) (if (pair? slot) (car slot) slot))
-	    (define (match proc l fail)
+	    (define (SLOT-NAME slot) (if (pair? slot) (car slot) slot))
+	    (define (MATCH proc l fail)
 		    (let loop ((l l))
 			 (if (pair? l)
 			     (if (proc (car l)) (car l) (loop (cdr l)))
 			     fail)))
-	    (define (initial-value slot)
+	    (define (INITIAL-VALUE slot)
 		    (if (pair? slot)
 			(match (lambda (x)
 				       (not (and (pair? x)
@@ -82,7 +81,7 @@
 			       (cdr slot)
 			       (car slot))
 			slot))
-	    (define (initial-args)
+	    (define (INITIAL-ARGS)
 		    (let loop ((slots slots))
 			 (if (pair? slots)
 			     (if (eq? (initial-value (car slots))
@@ -91,8 +90,8 @@
 				       (loop (cdr slots)))
 				 (loop (cdr slots)))
 			     '())))
-	    (define (check) `(if (eq? (vector-ref self 0) ',name) self #f))
-	    (define (get-put slot index fname default)
+	    (define (CHECK) `(if (eq? (vector-ref self 0) ',name) self #f))
+	    (define (GET-PUT slot index fname default)
 		    (if (pair? slot)
 			(let ((func (match (lambda (x)
 						   (and (pair? x)
@@ -108,17 +107,18 @@
 					       ,@(cddr func)))
 				 default))
 			default))
-	    (define (get slot index)
+	    (define (GET slot index)
 		    (let ((fname (make-sym name "-" (slot-name slot))))
 			 (get-put slot index fname
 			     `(define (,fname self)
 				      (vector-ref ,(check) ,index)))))
-	    (define (put slot index)
+	    (define (PUT slot index)
 		    (let ((fname (make-sym name "-" (slot-name slot) "!")))
 			 (get-put slot index fname
 			     `(define (,fname self value)
 				      (vector-set! ,(check) ,index value)))))
-            `(begin (define (,(make-sym "make-" name) ,@(initial-args))
+	    (expander
+		`(begin (define (,(make-sym "MAKE-" name) ,@(initial-args))
 				(let ((self (make-vector
 						,(+ 1 (length slots)))))
 				     (vector-set! self 0 ',name)
@@ -131,7 +131,7 @@
 							    (cdr slots)))
 						'()))
 				     self))
-			(define (,(make-sym "isa-" name "?") x)
+			(define (,(make-sym "ISA-" name "?") x)
 				(and (vector? x)
 				     (eq? (vector-ref x 0) ',name)))
 			,@(let loop ((i 1) (slots slots))
@@ -140,20 +140,20 @@
 					 (cons (put (car slots) i)
 					       (loop (+ i 1) (cdr slots))))
 				   '()))
-			',name))))
+			',name)
+		expander)))
 
 ;;; In-line versions of the default slot load/store procedures can be
 ;;; constructed by the following macro.
 ;;;
-;;; (define-in-line-structure-access <name> {slot-name | #F} ...)
+;;; (define-in-line-structure-access <name> {slot-name | #} ...)
 ;;;
 ;;; For each slot in the structure, either the slot name (indicating that
 ;;; access procedures should be constructed) or a #F (indicating that no
 ;;; access procedures are to be constructed) must be supplied.
 
-#;(define-syntax DEFINE-IN-LINE-STRUCTURE-ACCESS
-  (er-macro-transformer
-    (lambda (exp rename compare?)
+(define-macro DEFINE-IN-LINE-STRUCTURE-ACCESS
+    (lambda (exp expander)
 	    
 	    (define STRUCT-NAME (cadr exp))
 	    
@@ -199,7 +199,8 @@
 					 ": ~s")
 				    x))))
 	    
-            `(begin ,(make-isa)
+	    (expander
+		`(begin ,(make-isa)
 			,@(let loop ((slots (cddr exp)) (n 4))
 			       (if (pair? slots)
 				   (if (car slots)
@@ -207,12 +208,15 @@
 					     (cons (make-store (car slots) n)
 						   (loop (cdr slots) (+ n 4))))
 				       (loop (cdr slots) (+ n 4)))
-				   '()))))))
+				   '())))
+		expander)))
 
 ;;; The previously defined macro only makes sense in compiled code, so disable
 ;;; it in the interpreter.
 
-#;(eval-when (eval)
+(eval-when (eval)
     (define-macro DEFINE-IN-LINE-STRUCTURE-ACCESS
 	(lambda (exp expander)
 		(expander (list 'quote exp) expander))))
+							  
+					      

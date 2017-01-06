@@ -62,12 +62,40 @@
  
 ;; Macros that help the Scheme2c to CHICKEN conversion
 
-#;(define string->symbol
-  (let ((orig string->symbol))
-    (lambda (x)
-      (orig (string-downcase x)))))
-
-(define-syntax define-external
+#;(define-syntax define-external
   (syntax-rules ()
     ((define-external symbol . rest)
-     (declare (export symbol)))))
+     (export symbol))))
+
+(define-syntax define-external
+  (er-macro-transformer
+    (lambda (exp r c)
+      `(export ,(string->symbol (string-downcase (symbol->string (cadr exp))))))))
+
+
+;; This macro is often used in .sch files to expose symbols for structure access.
+;; That’s why we redefine it so that it exports structure access symbols from modules.
+
+(define-syntax define-in-line-structure-access
+  (er-macro-transformer
+    (lambda (exp rename compare?)
+      (define struct-name (string->symbol (string-downcase (symbol->string (cadr exp)))))
+      (define (make-sym . x)
+        (string->symbol (apply string-append
+                               (map (lambda (x)
+                                      (if (symbol? x)
+                                          (symbol->string x)
+                                          x))
+                                 x))))
+      (define (make-isa)
+        (make-sym "isa-" struct-name "?"))
+      (define (make-load slot)
+        (make-sym struct-name "-" slot))
+      (define (make-store slot)
+        (make-sym struct-name "-" slot "!"))
+
+      `(export
+             ,(make-isa)
+             ,@(append-map
+               (lambda (slot) (list (make-load slot) (make-store slot)))
+               (filter identity (cddr exp)))))))

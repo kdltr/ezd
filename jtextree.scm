@@ -64,9 +64,6 @@
     (width #f)
     (font #f))
 
-(define-in-line-structure-access jtextree textree lines first-changed
-    last-changed markers width font)
-
 ;;; A marker in the text is defined by a MARKER entry of the following
 ;;; form:
 
@@ -75,8 +72,6 @@
     line
     char
     (changed #f))
-
-(define-in-line-structure-access marker name line char changed)
 
 ;;; The change record in a JTEXTREE is cleared by calling the following
 ;;; procedure.

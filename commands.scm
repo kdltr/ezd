@@ -154,7 +154,7 @@
 
 (define (positive-number? x) (and (number? x) (> x 0)))
 
-(define (any? x) #t)
+#; (define (any? x) #t) ;; Already defined in data-structures
 
 (define (dash? x) (eq? x 'dash))
 

@@ -148,9 +148,6 @@
     last
     (slider #f))
 
-(define-in-line-structure-access text-view window x y width height first last
-    slider)
-
 ;;; A TEXT-DRAWING is created by the following ezd command.
 
 (define (text-drawing-option? x) (memq x '(read-only unjustified)))

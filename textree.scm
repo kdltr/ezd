@@ -54,8 +54,6 @@
     left
     right)
 
-(define-in-line-structure-access textree left-cnt height left right)
-
 ;;; The n'th line of text in a balanced tree composed of TEXTREE entries and
 ;;; strings is returned by the following procedure.
 

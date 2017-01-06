@@ -131,19 +131,6 @@
     (stipple-x 0)	;;; Stipple offset
     (stipple-y 0))
 
-(define-in-line-structure-access clipgc
-    width
-    color
-    background
-    stipple
-    dash
-    font
-    arc
-    xgc
-    bbl
-    stipple-x
-    stipple-y)
-
 ;;; ezd supports one display and it is stored in the following globals.  A
 ;;; display structure is used to facilitate extensions to ezd that allow
 ;;; multiple displays.  The boolean *UPDATE-DISPLAY* is set true when windows

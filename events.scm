@@ -50,12 +50,6 @@
     modifier-names	;;; Button modifier list of symbols.
     action)		;;; Action procedure.
 
-(define-in-line-structure-access event
-    type
-    modifier-mask
-    modifier-names
-    action)
-
 ;;; Event handlers are defined by the "when" command that has the following
 ;;; syntax:
 ;;;

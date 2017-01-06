@@ -70,13 +70,26 @@
 	  editcolor
 	  transpbuttons)
 
-(module ezd * ;; TODO write the right export list (from sch files)
+(module ezd ()
 
-(import scheme chicken)
+(import scheme chicken data-structures)
 
 (use scheme2c-compatibility xlib posix srfi-18 srfi-1 srfi-4 lolevel extras)
 
 (include "scheme2c.scm")
+
+;; Exports
+(include "commands.sch")
+(include "display.sch")
+(include "window.sch")
+(include "view.sch")
+(include "drawing.sch")
+(include "graphic.sch")
+(include "psdraw.sch")
+(include "events.sch")
+(include "ezd.sch")
+
+;; Actual code
 (include "struct.scm")
 (include "match.scm")
 (include "commands.scm")
