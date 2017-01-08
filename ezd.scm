@@ -88,6 +88,7 @@
 (include "psdraw.sch")
 (include "events.sch")
 (include "ezd.sch")
+(include "interact.sch")
 
 ;; Actual code
 (include "struct.scm")
