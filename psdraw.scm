@@ -155,7 +155,7 @@
     (pscommand "%%Creator: ezd - easy drawing for X11 displays."
 	"*EZD-VERSION*" *ezd-version*)
     (pscommand "%%CreationDate:"
-               (with-input-from-pipe "date" read-line))
+               (seconds->string))
     
     (pscommand "%%BoundingBox:"
 	(inexact->exact
