@@ -1,10 +1,10 @@
-(module ezd-external (ezd read-event ezd-options)
+(module ezd-external (ezd ezd-options ezd-output-port ezd-input-port)
 
 (import scheme chicken)
 (use posix)
 
-(define out #f) ;; ezd commands are written to this port
-(define in #f) ;; ezd events are read from this port
+(define ezd-output-port #f) ;; ezd commands are written to this port
+(define ezd-input-port #f) ;; ezd events are read from this port
 
 (define ezd-options '())
 
@@ -22,17 +22,14 @@
                     (exit 1))
                   #t)
     (file-close toin)
-    (set! out (open-output-file* toout))
+    (set! ezd-output-port (open-output-file* toout))
     (file-close fromout)
-    (set! in (open-input-file* fromin))))
+    (set! ezd-input-port (open-input-file* fromin))))
 
 (define (ezd . cmds)
-  (unless out
+  (unless ezd-output-port
     (start-ezd))
-  (for-each (lambda (c) (write c out)) cmds)
-  (flush-output out))
-
-(define (read-event)
-  (read in))
+  (for-each (lambda (c) (write c ezd-output-port)) cmds)
+  (flush-output ezd-output-port))
 
 )

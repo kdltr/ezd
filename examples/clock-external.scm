@@ -87,7 +87,7 @@
       `(when cover motion (log-event)))
 
 (draw-hands)
-(let loop ((ev (read-event)))
+(let loop ((ev (read ezd-input-port)))
   (unless (eof-object? ev)
     (match ev
       (('button3down 'clock-window 'clock 'back . _)
@@ -97,4 +97,4 @@
        (mark hand))
       (('motion 'clock-window 'clock 'cover x y _ _)
        (cover-motion x y)))
-    (loop (read-event))))
+    (loop (read ezd-input-port))))
