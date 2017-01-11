@@ -76,6 +76,10 @@
 
 (use scheme2c-compatibility xlib posix srfi-18 srfi-1 srfi-4 lolevel extras)
 
+;; disable buffering so that select works correctly.
+(set-buffering-mode! (current-input-port) #:none)
+(set-buffering-mode! (current-output-port) #:none)
+
 (include "scheme2c.scm")
 
 ;; Exports
