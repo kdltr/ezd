@@ -28,7 +28,9 @@
     (let ((idle-tasks (map cadr *tasks*)))
       (for-each (lambda (thunk) (thunk)) idle-tasks)
       (wait-system-file (port->fileno (current-input-port)))))
-  (read))
+  (if (char-whitespace? (peek-char))
+      (begin (read-char) (ezd-read))
+      (read)))
 
 (define (ezd-repl)
   (display "#;> ")
