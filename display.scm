@@ -74,18 +74,18 @@
 		   (class (visual-class default)))
 		  (if (and (eq? depth 8) (eq? class PSEUDOCOLOR))
 		      default
-		      (let* ((vi (make-xvisualinfo))
-		             (ok (xmatchvisualinfo dpy screen 8
+		      (let-temporary ((vi (make-xvisualinfo) free-xvisualinfo))
+                        (let ((ok (xmatchvisualinfo dpy screen 8
                                                    PSEUDOCOLOR vi)))
-                        (if (not (zero? ok))
-                            (begin (display-visual-depth! self 8)
-                              (display-colormap! self
-                                                 (xcreatecolormap dpy
-                                                                  (xrootwindow dpy screen)
-                                                                  (xvisualinfo-visual vi)
-                                                                  ALLOCNONE))
-                              (xvisualinfo-visual vi))
-                            default)))))
+                          (if (not (zero? ok))
+                              (begin (display-visual-depth! self 8)
+                                (display-colormap! self
+                                                   (xcreatecolormap dpy
+                                                                    (xrootwindow dpy screen)
+                                                                    (xvisualinfo-visual vi)
+                                                                    ALLOCNONE))
+                                (xvisualinfo-visual vi))
+                              default))))))
     (tiny-pixmap (xcreatepixmap (display-dpy self)
 		     (xrootwindow (display-dpy self) (display-screen self))
 		     1 1 (display-visual-depth self)))
@@ -172,7 +172,8 @@
 		    (redraw-all-windows)
 		    (xflush dpy)
 		    (loop)))
-	 (set! *current-drawing* save-current-drawing)))
+	 (set! *current-drawing* save-current-drawing)
+         (free-xevent event)))
 
 ;;; Normally, drawing and X event handling is done when there are no further
 ;;; commands to be processed.  However, the (DRAW-NOW) command causes drawing
@@ -223,18 +224,18 @@
     (let ((pc (getprop color 'private-color)))
 	 (if pc
 	     pc
-	     (let* ((hwcolor (make-xcolor))
-                    (excolor (make-xcolor))
-                    (ret (xallocnamedcolor (display-dpy display)
-                                           (display-colormap display)
-                                           (symbol->string color)
-                                           hwcolor
-                                           excolor)))
+	     (let-temporary ((hwcolor (make-xcolor) free-xcolor)
+                             (excolor (make-xcolor) free-xcolor))
+                (let ((ret (xallocnamedcolor (display-dpy display)
+                                                    (display-colormap display)
+                                                    (symbol->string color)
+                                                    hwcolor
+                                                    excolor)))
 		  (if (not (zero? ret))
 		      (xcolor-pixel excolor)
 		      (begin (format (current-error-port)
 				     "Can't allocate color: ~a~%" color)
-			     #f))))))
+			     #f)))))))
 
 ;;; Load a cursor into the display and return the Cursor data structure.
 
@@ -250,10 +251,10 @@
 ;;; Define a new color in the shared color map.
 
 (define (display-define-color display color color-value)
-    (let ((xc (make-xcolor))
-	  (dpy (display-dpy display))
-	  (screen (display-screen display))
-	  (rgb (color-value->rgb color-value)))
+    (let-temporary ((xc (make-xcolor) free-xcolor))
+      (let ((dpy (display-dpy display))
+            (screen (display-screen display))
+            (rgb (color-value->rgb color-value)))
 	 (set-xcolor-red! xc (* 256 (car rgb)))
 	 (set-xcolor-green! xc (* 256 (cadr rgb)))
 	 (set-xcolor-blue! xc (* 256 (caddr rgb)))
@@ -263,7 +264,7 @@
 	 (putprop color 'isa-color rgb)
 	 (putprop color 'private-color (xcolor-pixel xc))
 	 (display-private-colors! display
-	     (cons color (display-private-colors display)))))
+	     (cons color (display-private-colors display))))))
 
 ;;; Define a new color with a mutable private color cell.
 
@@ -291,8 +292,8 @@
 
 (define (display-set-variable-color display color color-value)
     (let ((dpy (display-dpy display))
-	  (xc (make-xcolor))
 	  (rgb (color-value->rgb color-value)))
+      (let-temporary ((xc (make-xcolor) free-xcolor))
 	 (set-xcolor-red! xc (* 256 (car rgb)))
 	 (set-xcolor-green! xc (* 256 (cadr rgb)))
 	 (set-xcolor-blue! xc (* 256 (caddr rgb)))
@@ -300,7 +301,7 @@
 	 (set-xcolor-pixel! xc (getprop color 'private-color))
 	 (xstorecolor dpy (display-colormap display) xc)
 	 (putprop color 'isa-color rgb)
-	 (set! *update-display* #t)))
+	 (set! *update-display* #t))))
 
 ;;; Convert a color-value to a list of RGB values.
 
@@ -338,8 +339,9 @@
 				 cgc
 				 (loop (cdr cgcs))))))))
 	 (if (not (clipgc-xgc cgc))
-	     (let* ((window (display-tiny-pixmap display))
-		    (gc (xcreategc dpy window 0 (make-xgcvalues))))
+             (let-temporary ((gcv (make-xgcvalues) free-xgcvalues))
+               (let* ((window (display-tiny-pixmap display))
+                      (gc (xcreategc dpy window 0 gcv)))
 		   (xsetlineattributes dpy gc (or width 0)
 		       (if dash LINEONOFFDASH LINESOLID) CAPNOTLAST JOINMITER)
 		   (xsetarcmode dpy gc (or arc ARCCHORD))
@@ -368,7 +370,7 @@
 		       (xsetfont dpy gc
 			   (xfontstruct-fid (display-font->xfontstruct display
 						font))))
-		   (clipgc-xgc! cgc gc)))
+		   (clipgc-xgc! cgc gc))))
 	 (unless (equal? bbl (clipgc-bbl cgc))
 		 (if (pair? bbl)
 		     (let loop ((l bbl) (rl '()))

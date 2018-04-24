@@ -133,12 +133,12 @@
 		(begin (ezd `(window ,popup-name ,menu-x ,menu-y ,menu-width
 				     ,(* menu-length menu-height)))
 		       (set! window (name->window popup-name))
-		       (xchangewindowattributes *dpy* (window-xwindow window)
+                       (let-temporary ((x (make-xsetwindowattributes) free-xsetwindowattributes))
+			 (set-xsetwindowattributes-save_under! x 1)
+			 (set-xsetwindowattributes-override_redirect! x 1)
+		         (xchangewindowattributes *dpy* (window-xwindow window)
 			   (bit-or CWSAVEUNDER CWOVERRIDEREDIRECT)
-			   (let ((x (make-xsetwindowattributes)))
-				(set-xsetwindowattributes-save_under! x 1)
-				(set-xsetwindowattributes-override_redirect! x 1)
-				x))))
+                           x))))
 	    (set! visible #t)
 	    (ezd `(overlay ,popup-name ,popup-name)))
     

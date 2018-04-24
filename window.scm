@@ -98,9 +98,11 @@
     (cursor (display-font->cursor display XC_LEFT_PTR))
     (cursors '())
     (gc #f)
-    (xwindow (let* ((dpy (display-dpy display))
+    (xwindow (let-temporary ((wa (make-xsetwindowattributes) free-xsetwindowattributes)
+                             (gcvals (make-xgcvalues) free-xgcvalues))
+                (let* ((dpy (display-dpy display))
 		    (screen (display-screen display))
-		    (wa (let ((wa (make-xsetwindowattributes)))
+		    (wa (begin
 			     (set-xsetwindowattributes-background_pixel! wa
 				 (window-background self))
 			     (set-xsetwindowattributes-border_pixel! wa
@@ -120,8 +122,8 @@
 				 (display-visual display)
 				 (bit-or CWBACKPIXEL CWBORDERPIXEL CWCOLORMAP)
 				 wa))
-		    (gc (xcreategc dpy xwindow 0 (make-xgcvalues))))
-		   (let ((wmh (make-xwmhints)))
+		    (gc (xcreategc dpy xwindow 0 gcvals)))
+		   (let-temporary ((wmh (make-xwmhints) free-xwmhints))
 			(set-xwmhints-flags! wmh 1)
 			(set-xwmhints-input! wmh 1)
 			(xsetwmhints dpy xwindow wmh))
@@ -143,7 +145,7 @@
 			 (cons (list (window-name self) self) *name-windows*))
 		   (set! *xwindow-windows*
 			 (cons (list xwindow self) *xwindow-windows*))
-		   xwindow)))
+		   xwindow))))
 
 (define-in-line-structure-access window
     display
@@ -219,8 +221,8 @@
 	  (if (window-exists? name) (window-delete name))
 	  (let ((w (make-window *display* x y width height name
 		       (or title (symbol->string name))
-		       foreground-name background-name))
-		(hints (make-xsizehints)))
+		       foreground-name background-name)))
+            (let-temporary ((hints (make-xsizehints) free-xsizehints))
 	       (set-xsizehints-flags! hints USSIZE)
 	       (set-xsizehints-width! hints width)
 	       (set-xsizehints-height! hints height)
@@ -238,7 +240,7 @@
 		     (set-xsizehints-min_height! hints height)
 		     (set-xsizehints-max_height! hints height))
 	       (xsetnormalhints *dpy* (window-xwindow w) hints)
-	       w)))
+	       w))))
 
 (define-ezd-command
     `(window ,symbol?

@@ -84,15 +84,15 @@
 		   (xfontstruct-descent (text-drawing-dxfs self))))
     (cursor-font "8x13bold")
     (cursor (make-marker 'cursor 0 -1))
-    (text-delta-x (let* ((fs (display-font->xfontstruct *display*
-				 (text-drawing-cursor-font self)))
-                         (cs (make-xcharstruct))
-			 (_ (xtextextents fs "^" 1
+    (text-delta-x (let ((fs (display-font->xfontstruct *display*
+				 (text-drawing-cursor-font self))))
+                    (let-temporary ((cs (make-xcharstruct) free-xcharstruct))
+			 (xtextextents fs "^" 1
 					  (make-locative (make-s32vector 1))
 					  (make-locative (make-s32vector 1))
 					  (make-locative (make-s32vector 1))
-					  cs)))
-			(quotient (xcharstruct-width cs) 2)))
+					  cs)
+ 			(quotient (xcharstruct-width cs) 2))))
     (cursor-delta-y (xfontstruct-ascent (text-drawing-dxfs self)))
     (views '())
     (visible-lines '())

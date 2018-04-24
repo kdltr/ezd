@@ -50,12 +50,12 @@
 ;;; fit in the box, then the text is not displayed.
 
 (define (text x y bbox words color stipple font)
+   (let-temporary ((dim (make-xcharstruct) free-xcharstruct))
     (let* ((width (if bbox (car bbox) #f))
 	   (height (if bbox (cadr bbox) #f))
 	   (center-x (if bbox (caddr bbox) #f))
 	   (center-y (if bbox (cadddr bbox) #f))
 	   (dxfs (display-font->xfontstruct *display* font))
-           (dim (make-xcharstruct))
 	   (extent (xtextextents dxfs words (string-length words)
                           (make-locative (make-s32vector 1))
                           (make-locative (make-s32vector 1))
@@ -122,7 +122,7 @@
 				    (- (bb-x) lbearing) (+ (bb-y) ascent)
 				    "moveto" (psstring words) "show"
 				    "viewmatrix" "setmatrix"))))
-	      (lambda (minx miny maxx maxy) #t))))
+	      (lambda (minx miny maxx maxy) #t)))))
 
 (define (center-x? x) (memq x '(left center right)))
 
@@ -139,8 +139,8 @@
 ;;; always specified as the maximum height for the font.
 
 (define (text->height-width words font)
+  (let-temporary ((dim (make-xcharstruct) free-xcharstruct))
     (let* ((dxfs (display-font->xfontstruct *display* font))
-           (dim (make-xcharstruct))
 	   (extent (xtextextents dxfs words (string-length words)
                           (make-locative (make-s32vector 1))
                           (make-locative (make-s32vector 1))
@@ -150,4 +150,4 @@
 	   (ascent (xfontstruct-max_bounds-ascent dxfs))
 	   (descent (xfontstruct-max_bounds-descent dxfs))
 	   (text-height (+ ascent descent)))
-	  (list text-height text-width)))
+	  (list text-height text-width))))

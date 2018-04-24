@@ -526,9 +526,10 @@
 	       ((eq? event-type MOTIONNOTIFY)
 		(let loop ((event event))
 		     (if (and (> (xeventsqueued *dpy* QUEUEDAFTERREADING) 0)
-			      (eq? (xevent-type (let ((ev (make-xevent)))
-                                                  (xpeekevent *dpy* ev) ev))
-				   MOTIONNOTIFY))
+                              (let-temporary ((ev (make-xevent) free-xevent))
+                                (xpeekevent *dpy* ev)
+			        (eq? (xevent-type ev)
+  				     MOTIONNOTIFY)))
 			 (begin
 			   (xnextevent *dpy* event)
 			   (loop event))

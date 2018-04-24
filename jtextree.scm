@@ -245,13 +245,13 @@
 	       ((line-width
 		    (if (equal? line "")
 			0
-			(let* ((dim (make-xcharstruct))
-			       (extent (xtextextents font old-text 1
+			(let-temporary ((dim (make-xcharstruct) free-xcharstruct))
+                          (let ((extent (xtextextents font old-text 1
 						     (make-locative (make-s32vector 1))
 						     (make-locative (make-s32vector 1))
 						     (make-locative (make-s32vector 1))
 						     dim)))
-			     (- (xcharstruct-lbearing dim)))))
+			     (- (xcharstruct-lbearing dim))))))
 		(charx 0)
 		(tabx 0))
 	       (let* ((cwidth-charx-tabx (token-size old-text old-text-len
@@ -313,13 +313,13 @@
 	  (let loop ((i 0) (j 0) (pixels 0)
 		     (lb (if (string=? line "")
 			     0
-			     (let* ((dim (make-xcharstruct))
-				    (extent (xtextextents font line 1
+			     (let-temporary ((dim (make-xcharstruct) free-xcharstruct))
+				(let ((extent (xtextextents font line 1
 							  (make-locative (make-s32vector 1))
 							  (make-locative (make-s32vector 1))
 							  (make-locative (make-s32vector 1)) 
 							  dim)))
-				  (- (xcharstruct-lbearing dim))))))
+				  (- (xcharstruct-lbearing dim)))))))
 	       (if (or (= i charx) (= i len))
 		   pixels
 		   (let ((char (string-ref line i)))
@@ -348,13 +348,13 @@
 		     (width (+ pixel
 			       (if (string=? line "")
 				   0
-				   (let* ((dim (make-xcharstruct))
-					  (extent (xtextextents font line 1
+				   (let-temporary ((dim (make-xcharstruct) free-xcharstruct))
+                                      (let ((extent (xtextextents font line 1
 								(make-locative (make-s32vector 1))
 								(make-locative (make-s32vector 1))
 								(make-locative (make-s32vector 1))
 								dim)))
-					(xcharstruct-lbearing dim))))))
+					(xcharstruct-lbearing dim)))))))
 	       (if (= i len)
 		   i
 		   (let ((char (string-ref line i))

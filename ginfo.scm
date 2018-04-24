@@ -48,8 +48,8 @@
     (and (symbol? x)
 	 (or (eq? x 'clear)
 	     (getprop x 'isa-color)
-	     (let* ((c (make-xcolor))
-                    (status (xparsecolor *dpy*
+	     (let-temporary ((c (make-xcolor) free-xcolor))
+                (let ((status (xparsecolor *dpy*
                                          (display-colormap *display*)
                                          (symbol->string x)
                                          c)))
@@ -59,7 +59,7 @@
 				  (list (quotient (xcolor-red c) 256)
 					(quotient (xcolor-green c) 256)
 					(quotient (xcolor-blue c) 256)))
-			      #t))))))
+			      #t)))))))
 
 ;;; A color value is either a color name other than clear or an RGB value.
 
