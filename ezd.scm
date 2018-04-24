@@ -142,13 +142,8 @@
 
 (define ezd-log #f)
 
-(eval-when (eval)
-    (define env-ezdlog "")
-    (define env-ezdnopixmap ""))
-    
-(eval-when (load)
-    (define env-ezdlog (or (getenv "EZDLOG") ""))
-    (define env-ezdnopixmap (or (getenv "EZDNOPIXMAP") "")))
+(define env-ezdlog (or (getenv "EZDLOG") ""))
+(define env-ezdnopixmap (or (getenv "EZDNOPIXMAP") ""))
 
 (define nopixmap (if (eq? env-ezdnopixmap "") #f #t))
 

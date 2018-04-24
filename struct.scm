@@ -208,11 +208,3 @@
 						   (loop (cdr slots) (+ n 4))))
 				       (loop (cdr slots) (+ n 4)))
 				   '()))))))
-
-;;; The previously defined macro only makes sense in compiled code, so disable
-;;; it in the interpreter.
-
-#;(eval-when (eval)
-    (define-macro DEFINE-IN-LINE-STRUCTURE-ACCESS
-	(lambda (exp expander)
-		(expander (list 'quote exp) expander))))
