@@ -1,5 +1,5 @@
 ((license "BSD")
  (category ui)
  (needs scheme2c-compatibility xlib)
- (author "Adrien Ramos")
+ (author "Joel Bartlett, ported to CHICKEN by Adrien Ramos")
  (synopsis "easy drawing for programs on X displays"))
