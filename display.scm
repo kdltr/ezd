@@ -384,9 +384,11 @@
 				   (set-xrectangle-height! r (- (cadddr bb)
 							        (cadr bb)))
 				   (loop (cdr l) (cons r rl)))
-			      (xsetcliprectangles dpy (clipgc-xgc cgc) 0 0
+                              (begin
+  			        (xsetcliprectangles dpy (clipgc-xgc cgc) 0 0
 				  (xrectangle-list->xrectanglea rl) (length rl)
-				  UNSORTED)))
+				  UNSORTED)
+                                (free-rectangle-list rl))))
 		     (xsetclipmask dpy (clipgc-xgc cgc) NONE))
 		 (clipgc-bbl! cgc bbl))
 	 (when (and stipple

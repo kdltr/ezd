@@ -556,9 +556,13 @@
 				      (set-xrectangle-height! r (- (cadddr bb)
 							       (cadr bb)))
 				      (loop (cdr l) (cons r rl)))
-				 (xsetcliprectangles *dpy* (window-gc window)
-				     0 0 (xrectangle-list->xrectanglea rl)
-				     (length rl) UNSORTED)))
+				 (begin
+                                   (xsetcliprectangles *dpy* 
+                                            (window-gc window)
+                                            0 0 
+                                            (xrectangle-list->xrectanglea rl)
+				            (length rl) UNSORTED)
+                                   (free-rectangle-list rl))))
 			(xfillrectangle *dpy* *pixmap* (window-gc window)
 			    0 0 width height)
 			;;; Draw to pixmap and then copy to the window.

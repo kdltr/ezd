@@ -61,6 +61,9 @@
         #f
         (make-locative v))))
 
+(define (free-rectangle-list lst)
+  (for-each free-xrectangle lst))
+
 (define (yselect dpy sec nsec)
   (let ((dpy-fd (xconnectionnumber dpy))
         (timeout (+ sec (/ nsec (expt 10 9)))))
