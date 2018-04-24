@@ -107,3 +107,14 @@
              ,@(append-map
                (lambda (slot) (list (make-load slot) (make-store slot)))
                (filter identity (cddr exp)))))))
+
+
+;;; helper macro for temporary binding + free
+
+(define-syntax let-temporary
+  (syntax-rules ()
+    ((_ ((var val free) ...) body ...)
+     (let ((var val) ...)
+       (receive results (begin body ...)
+         (begin (free var) ...)
+         (apply values results))))))
