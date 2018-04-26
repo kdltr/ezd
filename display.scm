@@ -370,7 +370,7 @@
 						font))))
 		   (clipgc-xgc! cgc gc)))
 	 (unless (equal? bbl (clipgc-bbl cgc))
-		 (if bbl
+		 (if (pair? bbl)
 		     (let loop ((l bbl) (rl '()))
 			  (if (pair? l)
 			      (let ((bb (car l))
