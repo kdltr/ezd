@@ -1,7 +1,7 @@
 ;;; The clock example, using an external ezd process instead of the module.
 ;;; 	csi -s clock-external.scm
 
-(use ezd-external matchable)
+(import ezd-external matchable)
 
 (define pi 3.14159)
 (define pi*2 (* 3.14159 2))

@@ -42,7 +42,7 @@
 ;;;
 ;;;	csi -s dragon.scm
 
-(use ezd xlib)
+(import (chicken process-context) (chicken format) srfi-1 ezd xlib)
 
 ;;; The following globals control how tiles are drawn.
 

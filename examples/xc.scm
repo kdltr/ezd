@@ -54,7 +54,7 @@
 ;;;
 ;;;	csi -s xc.scm
 
-(use ezd)
+(import (chicken format) ezd)
 
 (define (start-xc clargs)
     (case (length clargs)
@@ -62,7 +62,7 @@
 	       (ezd '(pause)))
 	  ((2) (xc (read (open-input-string (cadr clargs))))
 	       (ezd '(pause)))
-	  (else (format stderr-port "xc [key-color]~%"))))
+	  (else (format (current-error-port) "xc [key-color]~%"))))
 
 (define x-scale 50)
 (define y-scale 30)

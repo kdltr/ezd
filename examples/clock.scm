@@ -5,7 +5,7 @@
 ;;;
 ;;; 	csi -s clock.scm
 
-(use ezd)
+(import ezd)
 
 (define (clock time)
     

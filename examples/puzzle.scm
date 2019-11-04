@@ -5,7 +5,7 @@
 ;;;
 ;;;	csc -s puzzle.scm
 
-(use ezd)
+(import (chicken format) ezd)
  
 (define (puzzle pause)
     (define (control-c-exit)
