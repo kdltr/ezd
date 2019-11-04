@@ -1,7 +1,6 @@
 (module ezd-external (ezd ezd-options ezd-output-port ezd-input-port)
 
-(import scheme chicken)
-(use posix)
+(import scheme (chicken base) (chicken process))
 
 (define ezd-output-port #f) ;; ezd commands are written to this port
 (define ezd-input-port #f) ;; ezd events are read from this port

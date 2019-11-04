@@ -52,7 +52,7 @@
 
 (define-external POSITIVE-NUMBER? top-level)
 
-(define-external ANY? top-level)
+;(define-external ANY? top-level)
 
 (define-external DASH? top-level)
 

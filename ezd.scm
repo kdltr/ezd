@@ -72,13 +72,36 @@
 
 (module ezd ()
 
-(import scheme chicken data-structures)
+(import scheme (chicken base)
+(chicken condition)
+(chicken file posix)
+(chicken format)
+(chicken locative)
+(chicken memory)
+(chicken memory representation)
+(chicken module)
+(chicken platform)
+(chicken plist)
+(chicken port)
+(chicken process signal)
+;(chicken repl)
+(chicken time posix)
 
-(use scheme2c-compatibility xlib posix srfi-18 srfi-1 srfi-4 lolevel extras)
+srfi-1
+srfi-4
+srfi-18
+
+miscmacros
+scheme2c-compatibility xlib)
+
+(import-for-syntax srfi-1 srfi-13)
 
 ;; disable buffering so that select works correctly.
 (set-buffering-mode! (current-input-port) #:none)
 (set-buffering-mode! (current-output-port) #:none)
+
+(export any?)
+(define (any? x) #t)
 
 (include "scheme2c.scm")
 
@@ -146,6 +169,8 @@
 (define env-ezdnopixmap (or (getenv "EZDNOPIXMAP") ""))
 
 (define nopixmap (if (eq? env-ezdnopixmap "") #f #t))
+
+(define (reset) #t) ;; TODO should this be ezd-reset?
 
 (define (read-eval-draw clargs)
     (define pause (member "-p" clargs))
@@ -280,9 +305,7 @@
 		 (ezd-reset)
 		 (if command-stream (set! ezd-done #t))
 		 (if handling-events
-		     (if (feature? 'csi)
-			 (reset)
-			 (exit))))))
+		     (exit)))))
 
 ;;; Command stepping.  Each step identifies itself by a STEP command with some
 ;;; expression.  The expression is assigned to *STEP* and then the value of
