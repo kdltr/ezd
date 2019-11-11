@@ -297,7 +297,7 @@
 	 (set-xcolor-red! xc (* 256 (car rgb)))
 	 (set-xcolor-green! xc (* 256 (cadr rgb)))
 	 (set-xcolor-blue! xc (* 256 (caddr rgb)))
-	 (set-xcolor-flags! xc (bit-or DORED DOGREEN DOBLUE))
+	 (set-xcolor-flags! xc (integer->char (bit-or DORED DOGREEN DOBLUE)))
 	 (set-xcolor-pixel! xc (getprop color 'private-color))
 	 (xstorecolor dpy (display-colormap display) xc)
 	 (putprop color 'isa-color rgb)

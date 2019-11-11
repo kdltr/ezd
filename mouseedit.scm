@@ -344,7 +344,7 @@
 			 (buffer (make-string cnt)))
 			(delete-selection)
 			(move-memory! ptr buffer)
-			(if (not (zero? ptr)) (xfree ptr))
+			(if ptr (xfree ptr))
 			(set-attributes drawing object
 			    '(mouse-edit)
 			    `(insert ,cursor-line ,cursor-char ,buffer))

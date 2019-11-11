@@ -631,23 +631,25 @@
 (eval-when (load) (define view-compiled #t))
 (eval-when (eval) (define view-compiled #f))
 
+(ckn-define-external (graphics_eventp (c-pointer dpy) (c-pointer event) (c-pointer any))
+  bool
+  (let* ((type (xevent-type event)))
+    (if (or (and (eq? type GRAPHICSEXPOSE)
+                 (eq? (xevent-xgraphicsexpose-drawable event)
+                      *xwindow*))
+            (and (eq? type NOEXPOSE)
+                 (eq? (xevent-xnoexpose-drawable event)
+                      *xwindow*)))
+        #t
+        #f)))
+
 (define (transform-redisplay views damage-all deltax deltay
 	    minx miny maxx maxy)
-    
-    (define (graphics-event? dpy event any)
-	    (let* ((type (xevent-type event)))
-		  (if (or (and (eq? type GRAPHICSEXPOSE)
-			       (eq? (xevent-xgraphicsexpose-drawable event)
-				    *xwindow*))
-			  (and (eq? type NOEXPOSE)
-			       (eq? (xevent-xnoexpose-drawable event)
-				    *xwindow*)))
-		      1
-		      0)))
-    
+
     (define (handle-graphics-events)
-	    (let ((event (xifevent *dpy* graphics-event? (cons 'charp 0))))
-		 (when (eq? (xevent-type event) GRAPHICSEXPOSE)
+	    (let-temporary ((event (make-xevent) free-xevent))
+	      (xifevent *dpy* event (location graphics_eventp) #f)
+	      (when (eq? (xevent-type event) GRAPHICSEXPOSE)
 		       (window-expose-bbl! *window*
 			   (merge-bbl (xevent-xgraphicsexpose-x event)
 			       (xevent-xgraphicsexpose-y event)

@@ -72,27 +72,29 @@
 
 (module ezd ()
 
-(import scheme (chicken base)
-(chicken condition)
-(chicken file posix)
-(chicken format)
-(chicken locative)
-(chicken memory)
-(chicken memory representation)
-(chicken module)
-(chicken platform)
-(chicken plist)
-(chicken port)
-(chicken process signal)
-;(chicken repl)
-(chicken time posix)
-
-srfi-1
-srfi-4
-srfi-18
-
-miscmacros
-scheme2c-compatibility xlib)
+(import
+  scheme
+  (chicken base)
+  (chicken condition)
+  (chicken file posix)
+  (rename (only (chicken foreign) define-external location)
+          (define-external ckn-define-external))
+  (chicken format)
+  (chicken locative)
+  (chicken memory)
+  (chicken memory representation)
+  (chicken module)
+  (chicken platform)
+  (chicken plist)
+  (chicken port)
+  (chicken process signal)
+  (chicken time posix)
+  srfi-1
+  srfi-4
+  srfi-18
+  miscmacros
+  scheme2c-compatibility
+  xlib)
 
 (import-for-syntax srfi-1 srfi-13)
 
