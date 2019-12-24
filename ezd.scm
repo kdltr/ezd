@@ -149,7 +149,7 @@
 
 ;;; Version tag
 
-(define *ezd-version* "15mar93jfb")
+(define *ezd-version* "2019.12.24")
 
 ;;; The program accepts five command line arguments arguments:
 ;;;

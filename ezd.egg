@@ -1,11 +1,49 @@
 ((license "BSD")
  (category ui)
- (author "Joel Bartlett, ported to CHICKEN by Adrien Ramos")
+ (author "Joel Bartlett")
+ (maintainer "Adrien (Kooda) Ramos")
  (synopsis "easy drawing for programs on X displays")
  (dependencies srfi-1 srfi-18 scheme2c-compatibility xlib)
- (components (extension ezd)
-             (extension ezd-external)
-             (program ezd-command
-                      (source ezdprog.scm)
-                      (component-dependencies ezd)
-                      (install-name ezd))))
+ (components
+   (extension
+     ezd
+     (source-dependencies
+       "scheme2c.scm"
+       "commands.sch"
+       "display.sch"
+       "window.sch"
+       "view.sch"
+       "drawing.sch"
+       "graphic.sch"
+       "psdraw.sch"
+       "events.sch"
+       "ezd.sch"
+       "interact.sch"
+       "struct.scm"
+       "match.scm"
+       "commands.scm"
+       "ginfo.scm"
+       "display.scm"
+       "window.scm"
+       "drawing.scm"
+       "view.scm"
+       "graphic.scm"
+       "rectangle.scm"
+       "line.scm"
+       "text.scm"
+       "arc.scm"
+       "quilt.scm"
+       "psdraw.scm"
+       "events.scm"
+       "interact.scm"
+       "stringinput.scm"
+       "popupmenu.scm"
+       "buttons.scm"
+       "slider.scm"
+       "textree.scm"
+       "jtextree.scm"
+       "textdrawing.scm"
+       "mouseedit.scm"
+       "transpbuttons.scm"))
+   (extension ezd-external)
+   (program ezdprog (component-dependencies ezd) (install-name ezd))))
