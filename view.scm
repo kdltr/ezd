@@ -628,8 +628,9 @@
 ;;; N.B.: VIEW-COMPILED is required as the optimum case that uses XIFEVENT
 ;;; can only be used if TRANSFORM-REDISPLAY is compiled.
 
-(eval-when (load) (define view-compiled #t))
-(eval-when (eval) (define view-compiled #f))
+#;(eval-when (load) (define view-compiled #t))
+#;(eval-when (eval) (define view-compiled #f))
+(define view-compiled #t)
 
 (ckn-define-external (graphics_eventp (c-pointer dpy) (c-pointer event) (c-pointer any))
   bool

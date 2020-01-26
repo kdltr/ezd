@@ -92,7 +92,6 @@
   srfi-1
   srfi-4
   srfi-18
-  miscmacros
   scheme2c-compatibility
   xlib)
 
